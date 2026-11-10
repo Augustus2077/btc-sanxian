@@ -1,0 +1,323 @@
+<div class="guide" id="guide">
+<aside class="gtoc" id="g-toc" data-dyn></aside>
+<article class="gbody" id="g-body">
+
+<header class="ghead">
+  <h1>The three-line convergence, explained</h1>
+  <p class="gsub">From the definition of MVRV, to how to read every table and column on this page, to using it on today’s market, then its track record and its limits, and finally a set of common questions. Written in September–October 2026 (data through 2026-10-08, UTC). Boxes, tables, charts and numbers marked <span class="livechip">Live</span> recompute automatically as the data updates; where the text and a live number disagree, trust the live number.</p>
+  <p class="noprint" id="g-print-row"><button class="btn" id="btn-print-guide">Print / save as PDF</button> <span class="small">(choose “Save as PDF” in the print dialog to get a copy you can read on your phone)</span></p>
+</header>
+
+<h2 id="g0">0 · The one-minute version</h2>
+<p>The three-line convergence (三线合一) is a chart by Murphy (@Murphychen888): it stacks Bitcoin’s MVRV curve after each halving, aligned by “days since the halving”. The red line is this cycle (2024-04-20 halving), green is the 2020 cycle and blue the 2016 cycle. Where the three lines stick together is a “convergence”.</p>
+<p>It rests on just two foundations. First, MVRV = price ÷ the network’s average cost basis: it measures how many times over the average holder is in profit, a valuation gauge that doesn’t depend on the price level. Second, the halving is the only clock hard-coded into Bitcoin. Putting “valuation” on the “clock” shows which historical stage this cycle has reached, and whether it is more or less expensive than at the same point in history.</p>
+<div class="callout pri"><b>The most important sentence (tested on the data):</b> a convergence is not a “buy signal” in itself but a “synchronization”. When the three lines stick together, this cycle’s valuation matches history at the same point, and from there it most likely follows the historical lines: if they go up next, synchronization is bullish; if they go down, it is bearish. Backtesting every quantified convergence (13 through 2026-10, see 3.3), the red line’s direction 180 days later matched the average direction of the two historical lines every time: 9 went up, all in a bottoming or recovery phase; 4 went down, all on the way from a cycle top to the bear-market bottom, one of them this cycle’s 2025-12-30 to 2026-01-07.</div>
+<div class="livebox" id="g-now" data-dyn></div>
+<p>How to read the live box above: the red line sitting between green and blue is normal; running to the top or the bottom is a “deviation”. There are only three ways for the red line to rejoin the historical lines: price falls; time lets the historical lines rise to meet it; or this cycle decouples from history (3.4, 5.3). The chart can’t tell you which, but it can tell you which dates to watch: with four timing analogs it moves the previous three cycles’ bottoms, and the “last straw” before each, onto this cycle’s calendar (tables 5 and 7). With only three samples, this is a sense of rhythm, not a forecast.</p>
+<p class="small">Common questions (where we are in the cycle today, whether “a black swan always arrives on schedule” holds up, and how long recovery takes after a bear market) are answered in section 8.</p>
+
+<h2 id="g1">1 · Foundation one: what MVRV actually measures</h2>
+<h3 id="g1-1">1.1 Realized price RP: the network’s average “last-moved price”</h3>
+<p>Bitcoin’s ledger doesn’t record “account balances”; it records individual chunks of coins called UTXOs (unspent transaction outputs). The moment each UTXO last moved on chain is known, and the market price at that moment is its “realized price”.</p>
+<div class="formula">Realized Cap = Σ (each UTXO’s amount × the price when it last moved)<br>Realized Price RP = Realized Cap ÷ circulating supply<br>MVRV (Market Value to Realized Value) = market cap ÷ realized cap = price ÷ RP</div>
+<p>So RP can be read as “the network’s average cost basis”, or more precisely “the average price at which every coin last changed hands”. MVRV is “how many times that average cost the current price is”.</p>
+
+<h3 id="g1-2">1.2 A small example: when RP rises and when it falls</h3>
+<p>Suppose the whole network has just 4 coins (purely illustrative):</p>
+<div class="tblwrap"><table>
+<tr><th>Holder</th><th class="num">Amount</th><th class="num">Price when it last moved</th></tr>
+<tr><td>A</td><td class="num">1 BTC</td><td class="num">$20,000</td></tr>
+<tr><td>B</td><td class="num">1 BTC</td><td class="num">$60,000</td></tr>
+<tr><td>C</td><td class="num">1 BTC</td><td class="num">$100,000</td></tr>
+<tr><td>D (mined early, never moved)</td><td class="num">1 BTC</td><td class="num">$1,000</td></tr>
+</table></div>
+<p>RP = (20,000 + 60,000 + 100,000 + 1,000) ÷ 4 = <b>$45,250</b>. At a price of $84,000, MVRV = 84,000 ÷ 45,250 = <b>1.86</b>.</p>
+<p><b>Case A · capitulation.</b> Price drops to $50,000 and C can’t take it any more, selling the coin bought at $100,000 to E for $50,000. That coin’s “last-moved price” goes from 100,000 to 50,000, and RP drops from $45,250 to $32,750 (−28%). At the same $50,000 price, MVRV goes from 1.10 before the sale to 1.53 after it.</p>
+<p><b>Case B · profit-taking.</b> Price is still $84,000 and A sells the coin bought at $20,000 to F. Its last-moved price becomes 84,000, RP rises to $61,250, and MVRV drops from 1.86 to 1.37 without the price moving at all.</p>
+<div class="callout">These two cases run through the whole guide. First, RP only changes when coins move: in a bear market, trapped holders selling at a loss pull RP down, a process this page calls the “<b>cost reset</b>”; in a bull market, old coins sold at a profit push RP up. Second, that is why the MVRV peak tends to come before the price peak: heavy turnover late in a bull market lifts RP, so the same price means a lower MVRV. The 2020 cycle shows it: MVRV peaked at 3.96 on 2021-02-21, when RP was about $14.5k; when price peaked at $69,000 on 2021-11-10, RP had risen to $23.8k and MVRV was only 2.72.</div>
+
+<h3 id="g1-3">1.3 How to read MVRV values</h3>
+<div class="tblwrap"><table>
+<tr><th class="nw">MVRV</th><th>Meaning</th><th>Where it appeared historically</th></tr>
+<tr><td class="nw">&lt; 1</td><td>Price below the network’s average cost: the average holder is at a loss</td><td>Only at bear-market bottoms: 2011-09 to 2012-04, 2014-10 to 2015-10, 2018-11 to 2019-04, 2022-06 to 2023-01; plus the COVID crash of 2020-03-12 to 03-18</td></tr>
+<tr><td class="nw">= 1</td><td>The average holder is exactly at break-even; price equals RP</td><td>The reference line between bull and bear</td></tr>
+<tr><td class="nw">2</td><td>Market cap is twice the cost basis: an average unrealized gain of 100%</td><td>Mid bull market, early bear market</td></tr>
+<tr><td class="nw">3</td><td>Market cap is three times the cost basis: an average unrealized gain of 200%</td><td>Reached at the climax of each of the previous three bull markets; never reached this cycle (high 2.74)</td></tr>
+</table></div>
+<p class="small">A correction while we’re here: in his 2025-02-04 post Murphy described “MVRV above 3” as “an average of 300% unrealized profit”. Strictly, MVRV = 3 means market cap is 3× the cost basis, i.e. an unrealized gain of 200% of cost. A closely related metric is NUPL (Net Unrealized Profit/Loss) = 1 − 1/MVRV: MVRV 3 corresponds to NUPL 0.67, and MVRV 1 to 0.</p>
+
+<h3 id="g1-4">1.4 Why compare cycles with MVRV rather than price</h3>
+<p>The four bear-market bottoms were at $152, $3,122, $15,479 and, so far this cycle, <span data-live="lowPrice">$57,735</span>: hundreds of times apart. The cycles’ MVRV lows were 0.56, 0.69, 0.75 and, so far this cycle, <span data-live="minMv">1.10</span>: all on the same scale. Price is magnitude; MVRV is “how holders are doing”. Greed and fear repeat, price levels don’t, so you can only stack MVRV, not price. Switch the main chart’s lower panel to “Price” and you can see that the four price lines aren’t even in the same order of magnitude.</p>
+<div class="gchart" id="g-c1" data-chart></div>
+<p class="cap"><span class="livechip">Live</span> Each cycle’s MVRV peak (▲) and low (▼); the colors match the cycles. Peaks get lower every cycle and lows get higher: the swings are converging. Every later observation that “this cycle doesn’t look like history” traces back to this.</p>
+
+<h3 id="g1-5">1.5 A structural fact: MVRV bunches up at bottoms and spreads out at tops</h3>
+<p>MVRV has a “soft floor” at the bottom, roughly between 0.6 and 1.0. On one hand, by the bottom almost everyone willing to sell at a loss has already sold; on the other, capitulation itself pulls RP down (case A in 1.2), which pushes MVRV back up, a kind of self-repair. There is no ceiling at the top, though: it depends on how much new money arrives and how manic sentiment gets.</p>
+<p>The result: MVRV curves from different cycles naturally tend to come together at bear-market bottoms and drift apart at bull-market tops. So a “three-line convergence at the bottom” is half structural inevitability and only half pattern. That doesn’t refute it; it explains why convergences at the bottom are more reliable than convergences elsewhere.</p>
+
+<h2 id="g2">2 · Foundation two: why align by the halving</h2>
+<h3 id="g2-1">2.1 The halving is Bitcoin’s only hard-coded clock</h3>
+<p>Every 210,000 blocks, the miners’ block subsidy halves. Block heights are fixed, so the halving is the only on-chain event that is known in advance and identical in every cycle. The block times below were checked against mempool.space.</p>
+<div class="tblwrap"><table>
+<tr><th>Halving</th><th class="num">Block height</th><th>Block time (UTC)</th><th>Block subsidy</th><th class="num">New supply per day (approx.)</th></tr>
+<tr><td>1st</td><td class="num">210,000</td><td>2012-11-28 15:24:38</td><td>50 → 25 BTC</td><td class="num">7,200 → 3,600</td></tr>
+<tr><td>2nd</td><td class="num">420,000</td><td>2016-07-09 16:46:13</td><td>25 → 12.5</td><td class="num">3,600 → 1,800</td></tr>
+<tr><td>3rd</td><td class="num">630,000</td><td>2020-05-11 19:23:43</td><td>12.5 → 6.25</td><td class="num">1,800 → 900</td></tr>
+<tr><td>4th</td><td class="num">840,000</td><td>2024-04-20 00:09:27</td><td>6.25 → 3.125</td><td class="num">900 → 450</td></tr>
+<tr><td>5th</td><td class="num">1,050,000</td><td id="g-nh" data-dyn>≈ 2028-04 (est.)</td><td>3.125 → 1.5625</td><td class="num">450 → 225</td></tr>
+</table></div>
+<p>The causal chain behind “halvings drive the cycle” goes: the new coins miners must sell each day are halved → selling pressure falls → with demand unchanged, price is pushed up → the rise attracts new money and sentiment overheats → a top → a bear market clears it out. Whether that chain is right is disputed (see section 7), but the regularity of the timing is hard data.</p>
+
+<h3 id="g2-2">2.2 D numbers and “month k”</h3>
+<p>This page uses D for “days after the halving”, with the halving day as D0. <span data-live="dnow"></span>Note that “month k” counts from 1: Murphy’s “months 29–33” means 28 to 33 months have elapsed, i.e. roughly D852 to D1004, not a window starting at D883. That one-month difference decides where the window is drawn; the blue time windows on this page use this definition.</p>
+
+<h3 id="g2-3">2.3 How regular is the pattern, really? <span class="livechip">Live</span></h3>
+<div class="gchart" id="g-c2" data-chart></div>
+<p class="cap">Each row is one halving cycle, drawn from D0 to the next halving. ▲ is the cycle top (intraday high), ▼ the bear-market bottom (intraday low; for this cycle, the low so far), light-green stretches are MVRV &lt; 1 bottom zones, and the vertical line is today’s D.</p>
+<div class="tblwrap"><table id="g-t-cycles" data-dyn></table></div>
+<p>Numbers worth remembering: the last three cycle tops all came 526–548 days after the halving, and this cycle’s D534 sits right in between; bottoms came at D777–924; top to bottom took 363–410 days; bottom to the next halving 513–542 days. Cycle lengths differ (1,319 / 1,402 / 1,440 days) because hash-rate growth makes blocks arrive slightly faster than every 10 minutes on average (about 9.95 minutes per block this cycle), so aligning “by days” and “by share of the cycle” differ by a few weeks; table 5 under Key dates gives both. The 2012 cycle’s market was tiny and its rhythm faster; Murphy’s charts for this cycle no longer use it, and this page keeps it as a gray reference line.</p>
+
+<h2 id="g3">3 · Three-line convergence: what Murphy is actually saying</h2>
+<h3 id="g3-1">3.1 How the chart is drawn</h3>
+<p>Cut MVRV history into four segments at the halving dates, start each one at D0 and line up the same D vertically. Murphy’s colors this cycle (from 2025): red = this cycle (2024), green = the 2020 cycle, blue = the 2016 cycle. His 2022–2023 charts used different colors: red = the 2020 cycle, green = 2012, blue = 2016. This page’s “Last cycle” view uses those older colors so you can compare directly with his original charts; the “Murphy’s chart style” button on the first tab switches to the look of his current chart in one click (only red, green and blue, no lower panel or markers, x-axis from 2024-05). The x-axis shows the calendar of the selected cycle; hover to see the real date of each point on a historical line.</p>
+
+<h3 id="g3-2">3.2 His rules (as summarized by this page)</h3>
+<ol>
+<li><b>Convergence = the best buy zone.</b> Where the three lines stick together has historically been the best place to buy. In the last cycle he marked two: the major bottom in November–December 2022 ($16k–$18k) and the second bottoming in September–October 2023 ($26k–$28k).</li>
+<li><b>Timing rules.</b> In months 11–12 after the halving, all three lines’ MVRV rises above 3; in months 29–33 they all fall below 1; then comes a rebound of 5–6 months.</li>
+<li><b>Blue and green in sync.</b> When the blue and green historical lines move in the same direction, the red line most likely follows.</li>
+<li><b>Deviations revert.</b> The red line spends most of its time between blue and green; after running to the top or the bottom (a “deviation”), it tends to come back to the middle.</li>
+<li><b>Scaled price.</b> A historical line’s MVRV × the current RP gives “the price if this cycle reached the same valuation”. RP changes daily, which is why he always adds “(dynamic)” to such prices.</li>
+<li><b>Positioning.</b> In his own words, 99% of his analysis rests on data with an underlying logic (holder-age cohorts, turnover cost, financial pressure, sentiment); the three-line convergence alone is a “metaphysical indicator”, to be used only when everything else agrees.</li>
+</ol>
+
+<h3 id="g3-3">3.3 The right reading after testing it on data: a “synchronization” signal, not a “buy signal” <span class="livechip">Live</span></h3>
+<p>“Sticking together” has to be quantified before it can be tested. This page defines: spread = (max − min of the three lines’ MVRV) ÷ their average; a spread below 10% lasting at least 5 days (with gaps of up to 3 days merged into one stretch) counts as one “convergence”. The definition is this page’s; Murphy judges by eye. But 10% exactly reproduces the two he marked by hand (2022-11-08 to 12-07 and 2023-09-20 to 10-04), so the definition isn’t off.</p>
+<p>Scanning both perspectives that can be backtested (the 2020 cycle against 2016 / 2012, and this cycle against 2020 / 2016) gives the convergence periods below, and what followed each one:</p>
+<div class="tblwrap"><table id="g-t-bt" data-dyn></table></div>
+<div class="gchart" id="g-c4" data-chart></div>
+<p class="cap">Each dot is one convergence: the x-axis is the D when it ended, the y-axis the red line’s price change over the next 180 days. ▲ up, ▼ down; green dots are the backtest with the 2020 cycle as the red line, red dots this cycle. The light background marks the historical “top → bottom” declines.</p>
+<p>The pattern is very clean (through 2026-10): the red line’s direction 180 days later matched the average direction of the two historical lines every single time. The good ones were all in bottom zones (2022-11) or recoveries (2020-05, 2023-07 to 12, 2024-08 to 10); the bad ones all happened on the way down from a top to the bottom (twice in 2022-01, 2022-05, and this cycle’s 2025-12-30 to 2026-01-07), when the two historical lines were themselves heading down.</p>
+<div class="callout warn"><b>Bluntly:</b> remembering only “convergence = buy signal” will hurt you. The convergence from 2025-12-30 to 2026-01-07 had the red line at $87.5k–$93.9k; over the next 180 days price fell 30%, with a maximum drawdown of 37%. The right question is always: “It converged; so where do the historical lines go next?”</div>
+<p>The threshold is just a dial. From 6% to 12%, the 2022-01, 2022-11, 2023-07 to 08 and 2023-09 to 10 convergences always show up (2022-01 being the bad kind), while a few marginal ones come and go. Drag the threshold slider on the first tab to see for yourself.</p>
+
+<h3 id="g3-4">3.4 How do deviations revert? All three ways have happened</h3>
+<p>Rule 4 says the red line returns to the middle after a deviation. This page found every period in the 2020 cycle when the red line was on top with a spread above 50%; reversion took three forms:</p>
+<div class="tblwrap"><table>
+<tr><th>Period (2020 cycle as the red line)</th><th>Background</th><th>How it reverted</th><th>Price</th><th class="noprint"></th></tr>
+<tr><td class="nw">2020-12-16 to 2021-03-17</td><td>Main bull leg</td><td><b>By time</b>: the historical lines rose to meet the red line; they merged on 2021-04-03</td><td>Price kept rising (2020-12-20 to 2021-04-03: +143%)</td><td class="noprint"><button class="btn sm" data-goto="2020:180:360">Show on chart</button></td></tr>
+<tr><td class="nw">2022-03-17 to 04-20</td><td>Bear-market rally</td><td><b>By price</b>: the red line came down; they merged on 2022-05-09</td><td>Fell about 25%–35%</td><td class="noprint"><button class="btn sm" data-goto="2020:640:760">Show on chart</button></td></tr>
+<tr><td class="nw">2024-01-13 to 03-28</td><td>Spot ETF rally</td><td><b>No reversion</b>: the red line stayed on top until the cycle ended (2024-04 halving)</td><td>New all-time high</td><td class="noprint"><button class="btn sm" data-goto="2020:1300:1440">Show on chart</button></td></tr>
+</table></div>
+<p>So “deviations always revert” is not a law: they can be absorbed by time, by price, or not at all. At the time of writing (2026-10), this cycle was in a large deviation with the red line on top; see the live box in section 5 for the current state.</p>
+
+<h2 id="g4">4 · How to read each part of the page</h2>
+<h3 id="g4-1">4.1 The six number tiles at the top</h3>
+<div class="tblwrap"><table>
+<tr><th>Tile</th><th>How it is computed</th><th>What it is for</th></tr>
+<tr><td class="nw">Cycle progress</td><td>Days from 2024-04-20 to the latest data day (D), plus months elapsed</td><td>Use the D to look up what was happening on the same day in history</td></tr>
+<tr><td class="nw">BTC close</td><td>CoinMetrics reference price PriceUSD, UTC daily close (00:00 UTC)</td><td>Every MVRV on the page uses this price</td></tr>
+<tr><td class="nw">MVRV</td><td>CoinMetrics’ CapMVRVCur; the second line is this cycle’s low and its date</td><td>Where this cycle’s valuation stands</td></tr>
+<tr><td class="nw">Realized price RP</td><td>Close ÷ MVRV</td><td>The price at which MVRV = 1. This cycle’s low so far (2026-07-01) was only 8.8% above that day’s RP</td></tr>
+<tr><td class="nw">Cycle intraday low (so far)</td><td>Bitstamp daily low</td><td>Note the “so far”: this cycle’s bottom may not have happened yet</td></tr>
+<tr><td class="nw">From the highest close</td><td>Close ÷ highest close ever − 1</td><td>How deep the drawdown is</td></tr>
+</table></div>
+
+<h3 id="g4-2">4.2 The main chart (three lines)</h3>
+<p>The <b>x-axis</b> is the calendar of the selected cycle; the D under each tick is days after the halving. <b>Four lines</b>: red, green and blue are the “three lines”; gray is the 2012 cycle (for reference; click the legend to hide it). <b>▲ / ▼</b> mark where each cycle’s intraday high and low fell on its MVRV line; <b>colored dashed verticals</b> mark each cycle’s bottom with its D and real date; the <b>black vertical</b> is the latest day. The <b>yellow band</b> shows convergence periods (adjustable threshold); the <b>light-blue bands</b> are Murphy’s two time windows (months 11–12 and months 29–33); the <b>horizontal dashed lines</b> are MVRV = 1 and 3.</p>
+<p>In the table that pops up on <b>hover</b>: “Actual date” is when that point on that line really happened; “From high” is the drawdown at that time from the highest close up to then; the last column, “At today’s RP”, is that historical line’s MVRV at this point × today’s RP, Murphy’s dynamic scaled price. The marker on the left axis shows both the MVRV and the price it corresponds to today.</p>
+<p><b>Three lower panels</b>: drawdown from the high (how deep each bear market went); actual price (log scale, showing why prices can’t be stacked directly); and the spread of the three lines (yellow; below the dashed threshold means convergence). In <b>log y-axis</b> mode, 1→2 is the same distance as 2→4, which helps with detail near the bottom. Switch the <b>view</b> to “Last cycle” to use the 2020 cycle as the red line and check everything Murphy said in 2022–2023 for yourself.</p>
+<p><b>Buttons:</b> “Murphy’s chart style” switches to the look of his current chart in one click; “Reset view” returns to the defaults; “Share” at the right of the tab bar creates a link to the current view, so whoever opens it sees exactly what you see (the <b>#</b> next to each heading in the Guide copies a link straight to that section). <b>Auto-remember:</b> your tab, view, switches, threshold, hidden lines, zoom and scroll position are saved in your own browser after every change and before the page closes, and restored next time.</p>
+
+<h3 id="g4-3">4.3 Full history</h3>
+<p>The top chart is price (black) and RP (orange); the gap between them is MVRV. Light-green bands are days with MVRV &lt; 1. One glance shows that price fell below RP only at the bottoms of past bear markets (2011, 2014–15, 2018–19, 2022, plus the COVID week of March 2020). <span data-live="p43">This cycle’s low so far (2026-07-01, $57,735) is still 8.8% above that day’s RP ($53,057): a first.</span></p>
+
+<h3 id="g4-4">4.4 The key-date tables, table by table and column by column</h3>
+<p><b>Table 1 · Key dates of each cycle.</b> The top is given two ways: “intraday high” comes from Bitstamp’s daily high and “highest close” from CoinMetrics’ UTC close; they can be a day or two apart. The MVRV peak usually comes before the price peak, for the reason given in 1.2. The bottom likewise has three versions: intraday low, lowest close and MVRV low. The 2020 cycle is the textbook case: the MVRV low came on 2022-11-09 (during the FTX blow-up, 0.754, close $15,758), the intraday price low on 2022-11-21 ($15,479), yet that day’s MVRV was higher, at 0.778. The reason: in those two weeks panic sellers capitulated en masse, pulling RP from about $20.9k to $20.3k, a cost reset, so the same price meant a higher MVRV. The “MVRV&lt;1 bottom zone” joins &lt;1 days that are no more than 120 days apart, so the six days in the 2016 cycle during the March 2020 COVID crash are listed separately rather than counted as its bottom zone. “Top → bottom” is the number of days from top to bottom; “max drawdown” is intraday low ÷ intraday high − 1.</p>
+<p><b>Table 2 · Historical milestones moved onto this cycle’s calendar.</b> Date in this cycle = 2024-04-20 + the milestone’s D in its own cycle. “Ago / in” is relative to the latest data day. This is a pure timing analogy, with no price information.</p>
+<p><b>Table 3 · Convergence periods.</b> Computed for the current view and threshold. The later columns (next 90 days, next 180 days, max drawdown within 180 days, the historical lines over the same period) are the source of the backtest in 3.3; switch views to see the 2020 cycle and this cycle separately.</p>
+<p><b>Table 4 · All three historical lines below MVRV 1 at once.</b> The days when all three historical lines were below 1 on the same D: D863 to D976, all inside “months 29–33” (about D852–D1004). This is the data behind Murphy’s timing rule. On this cycle’s calendar it falls on 2026-08-31 to 2026-12-22.</p>
+<p><b>Table 5 · Timing analogs for this cycle’s bottom.</b> Four ways to move the previous three cycles’ bottoms onto this cycle: by days after the halving, by days after the top, by days before the next halving, and by share of the cycle’s length. The last two depend on the estimated date of the next halving (extrapolated from this cycle’s average block time, accurate to a few weeks).</p>
+<p><b>Table 6 · Murphy-style scaling.</b> One row per week for the next 16 weeks, plus the historical bottom days: the real dates and MVRV of the green and blue lines on the same D, multiplied by today’s RP to give a scaled price. It answers “if this week’s valuation in this cycle equaled the same week in the 2020 / 2016 cycle, what would the price be?” It is a like-for-like valuation, not a price forecast; when RP moves, the whole column moves with it.</p>
+<p><b>Table 7 · Where today sits in earlier cycles, and when the “last straw” fell.</b> The first table uses four clocks (days after the halving, days after the top, days before the next halving, cycle progress) to find this cycle’s “today” in each of the previous three cycles, showing how far that point was from the bottom, how high MVRV was, and what happened over the next 30 / 90 days. The second table places well-known crashes on the cycle clock and marks which one was the “last straw”. The third moves the three last straws onto this cycle’s calendar with the four clocks. The fourth counts the 7-day drops of ≥20% in each bear market. See section 8 for how to use them.</p>
+<p><b>Table 8 · How long recovery took after the bottom.</b> Days counted from each cycle’s bottom until: the close is up 1.5×, 2× and 3×; MVRV is back above 1 and holding; a new all-time-high close; the next halving; the next cycle top. The table below it applies these day counts to this cycle’s two scenarios: A = this cycle’s low so far was the bottom; B = the bottom comes on a table-5 analog date that hasn’t passed yet.</p>
+
+<h2 id="g5">5 · Reading today’s market with his method</h2>
+<p class="small">Every number in this section is computed live and updates with the data; the analytical framework was written in 2026-10.</p>
+<div class="livebox" id="g-live" data-dyn></div>
+
+<h3 id="g5-1">5.1 Where we are now <span class="livechip">Live</span></h3>
+<p data-live="p51"></p>
+
+<h3 id="g5-2">5.2 What history did after this point <span class="livechip">Live</span></h3>
+<div class="gchart tall" id="g-c5" data-chart></div>
+<p class="cap">This cycle from D700 to D1150. Red, green, blue and gray as in the main chart; the horizontal dashed line is the red line’s level today, extended to the right only as a reference, not a forecast; the light-yellow background covers the table-5 bottom analog dates that haven’t passed yet; dots mark the day each historical line first rises to the red line’s level today.</p>
+<p data-live="p52"></p>
+
+<h3 id="g5-3">5.3 How does the red line “rejoin” the historical lines? Three paths</h3>
+<p><b>Path A · price moves toward history.</b> <span data-live="p53a"></span></p>
+<p><b>Path B · time absorbs it.</b> <span data-live="p53b"></span></p>
+<p><b>Path C · decoupling.</b> The red line no longer has a stable relationship with the historical lines, and the three-line convergence loses most of its value for this cycle. The 2024-01 to 03 episode in 3.4 is a precedent of a deviation that never reverted before the cycle ended.</p>
+<p>The evidence for A is timing: <span data-live="p53t"></span>The evidence for B and C is magnitude: almost every magnitude measure in this cycle has already departed from history:</p>
+<div class="tblwrap"><table id="g-t-cmp" data-dyn></table></div>
+<p>The most telling is the cost reset: in each of the previous three bear markets, RP fell about 20% from its peak (−20.3%, −20.4%, −20.0%, strikingly consistent); <span data-live="p53rp"></span>In other words, every historical bottom came with a mass capitulation of coins bought high, and in this cycle only a small part of that has happened so far. That can be read as “the bear market was shallow and is over” (B or C), or as “the big capitulation hasn’t come yet” (A). The data itself doesn’t favor either side.</p>
+<div class="gchart" id="g-c3" data-chart></div>
+<p class="cap"><span class="livechip">Live</span> The x-axis is days after the price top (intraday high); the y-axis is RP relative to its peak in that bear market. The previous three cycles all fell to about 80%. The labels at the line ends give each cycle’s peak-to-trough RP decline.</p>
+<p data-live="p53w"></p>
+
+<h3 id="g5-4">5.4 Murphy’s most recent public reading</h3>
+<p>According to BlockBeats’ summary of 2026-06-28, Murphy’s halving-aligned MVRV analysis said: volatility this cycle is severely compressed, with highs not high enough and lows not low enough; the channel at the time corresponded to an MVRV of about 1.12–1.30, or $59k–$70k; until July 23 a weak rebound or sideways action was most likely, a drop to $50k was unlikely, and any rebound would top out around $70k; the real grind-down drawdown was most likely to come after July 23 or August 23; September–October could be a more important turning window; and bitcoin below $60k counts as cheap. For what actually happened, see the last three rows of the scorecard in the next section.</p>
+
+<h2 id="g6">6 · Scorecard: what he said, and what happened next</h2>
+<p>The “He said” column summarizes his original posts; the “Actually” column comes entirely from this page’s data (written in 2026-10, data through 2026-10-08); the verdicts are this page’s. You can check every row yourself with the “Last cycle” view and the key-date tables.</p>
+<div class="tblwrap"><table class="score">
+<tr><th class="nw">Date</th><th>He said</th><th>Actually</th><th class="nw">Verdict</th></tr>
+<tr><td class="nw">2022-12-24</td><td>Now (month 32 after the halving) is the zone where all three lines have MVRV &lt; 1: the best place to buy a historic bottom</td><td>Close that day $16,838; the cycle’s intraday low was $15,479 (2022-11-21), never broken afterwards</td><td class="verdict">✓ right</td></tr>
+<tr><td class="nw">2022-12-24</td><td>A rebound (a mini bull market) comes 5–6 months later</td><td>The close on 2023-06-23 was $30,638, 82% above 2022-12-24</td><td class="verdict">✓ right</td></tr>
+<tr><td class="nw">2022-12-24</td><td>In months 54–58 after the halving (2024-10 to 2025-02), all three lines’ MVRV will be above 3</td><td>MVRV peaked at 2.74 (2024-11-21) in that period; price did make its main advance then, though, from $60.9k to an intraday $109.4k (2025-01-20)</td><td class="verdict">◐ timing right, magnitude wrong</td></tr>
+<tr><td class="nw">2023-03-02</td><td>In months 29–33 after every halving, MVRV is always below 1</td><td>In the previous three cycles, 93%, 88% and 78% of those 153 days were below 1; <span data-live="sc2933"></span></td><td class="verdict" data-live="sc2933v">history ✓ / this cycle ✗</td></tr>
+<tr><td class="nw">2023-11-16</td><td>The last cycle already had two convergences (2022-11 to 12, 2023-09 to 10), both the best buy zones</td><td>This page’s quantification reproduces both exactly; 180 days later they were +53% and +151%</td><td class="verdict">✓ right</td></tr>
+<tr><td class="nw">2023-11-16</td><td>A third convergence may come in 3–4 months, preceded by a “final drop”; of three scenarios, “a pullback to $26k–$29k” is the most likely</td><td>At a 12% threshold the third convergence actually came right away (2023-11-16 to 21, 2023-12-11 to 17); from 2024-01-15 to the end of that cycle (2024-04-19) the spread never went below 27.7%, with no further convergence. The “final drop” came in 2024-01: from an intraday $49,048 (1/11) to $38,505 (1/23), −21%, closer to his scenario 1 (a spike above $40k, then a pullback to $34k–$36k); $26k–$29k never happened</td><td class="verdict">◐ partly right</td></tr>
+<tr><td class="nw">2025-02-04</td><td>This cycle’s MVRV probably won’t get above 3 (scenarios 2 and 3 far more likely than scenario 1)</td><td>Afterwards this cycle’s MVRV peaked at only 2.42 (2025-05-22)</td><td class="verdict">✓ right</td></tr>
+<tr><td class="nw">2025-02-04</td><td>Worst case, scenario 3: the red line chops lower for five months and only bottoms at the end of June 2025</td><td>The low actually came on 2025-04-07 (intraday $74,434; MVRV low of 1.74 on 4/8), and by 6/30 price was back at $107,153</td><td class="verdict">✗ timing wrong</td></tr>
+<tr><td class="nw">2025-04-20</td><td>The red line’s next rise is capped at the previous high MVRV of 2.47 (about $108,300 at the time, dynamic)</td><td>MVRV peaked at 2.42 afterwards, never exceeding 2.47; but price reached $126,272 (2025-10-06), because RP rose from $43.8k to $54.6k</td><td class="verdict">✓ valuation cap right; scaled price thrown off by RP</td></tr>
+<tr><td class="nw">2025-04-20</td><td>From late June to mid-August, blue and green rise together and red follows</td><td>6/30 close $107,153 → 8/13 close $123,443</td><td class="verdict">✓ right</td></tr>
+<tr><td class="nw">2025-09-02</td><td>A turn around 9/7–9/9; blue and green rise together to about 9/29 and stay above MVRV 2.42 until 10/30 at the latest, with the red line able to climb step by step before then</td><td>9/9 close $111,486 → 10/6 close $124,824 (this cycle’s high, D534), then a turn lower; 10/30 close $108,020; the red line peaked at 2.29, never touching 2.42</td><td class="verdict">◐ top window right, height short</td></tr>
+<tr><td class="nw">2026-06-28<br><span class="sm">via BlockBeats</span></td><td>Channel MVRV 1.12–1.30 ($59k–$70k); before 7/23 a weak rebound or sideways, $50k unlikely, rebound no higher than about $70k</td><td>Intraday low $57,735 (7/1, 2% below the channel floor); the highest close before 7/23 was $66,403 (7/21); never close to $50k</td><td class="verdict">✓ right</td></tr>
+<tr><td class="nw">2026-06-28</td><td>The real grind-down drawdown most likely comes after 7/23 or 8/23</td><td>After 7/23 the low was $62,216 (8/3), no new low; from 8/18 to 8/21 price jumped from $64.7k to $78.4k in three days; after 8/23 the low was $74,913 (9/15)</td><td class="verdict">✗ direction reversed</td></tr>
+<tr><td class="nw">2026-06-28</td><td>September–October may be a more important turning window</td><td>The turn came early, in late August, and upward; 9/21 close $86,505</td><td class="verdict">◐ big move, but early and the other way</td></tr>
+</table></div>
+<p>In sum: his timing calls have a high hit rate (the bottom zone, the rebound timing, the 2025 top window); his magnitude calls often miss, especially this cycle (MVRV failed to reach 3 or to fall below 1, and price targets were thrown off by changes in RP). So with this chart, trust its “when” more than its “how much”.</p>
+
+<h2 id="g7">7 · Limits, and the claim that “the big cycle isn’t affected by outside events”</h2>
+<h3 id="g7-1">7.1 Too few samples</h3>
+<p>There are only three complete cycles, and the 2012 market was so small that strictly it’s two and a half. “Every cycle…” is statistically just 3 data points. Worse is the multiple-comparisons problem: the more metrics, windows and thresholds you look at, the more likely you are to hit a coincidental match. Both timing rules held in the previous three cycles and both failed in this one, which is a warning.</p>
+<h3 id="g7-2">7.2 The cycle is decaying</h3>
+<p>Peak MVRV, maximum drawdown, bull-market gains (previous bottom to this cycle’s top: 129× → 22× → 8.2×) and the depth of the cost reset are all converging. The more mature and the larger an asset, the smaller its swings; that is the norm, not a quirk of this cycle.</p>
+<h3 id="g7-3">7.3 On “the big cycle isn’t affected by outside events”</h3>
+<p>The pattern many people see is real: the timing of the tops (D526, D548, D534 after the halving) is almost to the day. But “not affected by outside events” goes too far, and the data has counterexamples. The March 2020 COVID crash pushed the 2016 cycle back below MVRV 1 for six days at the very end of the cycle; in 2022, LUNA (May) and FTX (November) both hit during the bear market and drove the bottom deeper. From price alone you can’t tell whether the cycle “produced” these events or the events “shaped” the cycle (section 8 breaks this down further).</p>
+<p>Another school holds that the four-year cycle is really a reflection of the global liquidity cycle (rates, the dollar, credit expansion): the previous three bear markets (2014–15, 2018, 2022) all coincided with a strong dollar or Fed tightening, and the halving merely lines up in time. In this cycle, spot ETFs and institutional holdings changed who owns the coins, which may be one reason volatility has been compressed. Both views have data behind them; there is no consensus yet.</p>
+<p>A reading closer to the data may be: so far the rhythm of the big cycle (when) has been very stable, but its amplitude (how high, how deep) is amplified or damped by the outside environment and market structure. Those two are best kept apart.</p>
+<h3 id="g7-4">7.4 Data definitions</h3>
+<p>MVRV depends on “the price when a coin last moved”, which brings some systematic biases. Lost coins (including early miners’ coins) are counted forever at a very low cost, pulling RP down. Exchanges reshuffling internal wallets and ETF custodians moving cold storage make coins “move” and get repriced at the current price; there was a lot of this in this cycle, which may have lifted RP and depressed MVRV. Data vendors (Glassnode, CoinMetrics) also differ in the details: this page’s data and Looknode (Glassnode data) differ by about 0.1%–0.4%, which doesn’t change any conclusion, but don’t treat 1.93 and 1.94 as two different things.</p>
+<h3 id="g7-5">7.5 Murphy’s own caveats</h3>
+<p>Every time he discusses the three-line convergence he stresses that it is a “metaphysical indicator”, only to be used when other data with real logic agrees, and he has publicly acknowledged when it failed (in March 2025). The best way to use this chart is as a “time map” and a “valuation thermometer”, not a buy/sell switch.</p>
+
+<h2 id="gsw">8 · Common questions: where we are today, “a black swan always arrives on schedule”, and how long until recovery</h2>
+<p class="small">This section was written in 2026-10 (data through 2026-10-08); tables, charts and numbers marked <span class="livechip">Live</span> recompute as the data updates, and they take precedence.</p>
+<p>This section answers three questions that come up often. First, compared with the same “today” in earlier cycles, where are we now? Second, there is a view that COVID in 2020 and LUNA and FTX in 2022 were no accidents, but that “when the time comes, a black swan always arrives; it only needs an excuse”. By that logic, how far away is this cycle’s black swan? Third, how long until the market recovers after a bear market?</p>
+
+<h3 id="gsw-1">8.1 Where today sits in earlier cycles <span class="livechip">Live</span></h3>
+<p>There are four ways to match “the same point in time”, each with its own logic: by days after the halving (Murphy’s way); by days after the top (how long the bear market has run); by days before the next halving (aligning the ends of the cycles); and by percentage of the cycle (normalizing for different cycle lengths). The table below lists all four:</p>
+<div class="tblwrap"><table id="g-t-today" data-dyn></table></div>
+<p data-live="p81a"></p>
+<p data-live="p81b"></p>
+
+<h3 id="gsw-2">8.2 Historical “black swans” on the cycle clock <span class="livechip">Live</span></h3>
+<div class="tblwrap"><table id="g-t-swan" data-dyn></table></div>
+<div class="gchart tall" id="g-c6" data-chart></div>
+<p class="cap">The x-axis is days after the top (intraday high); the y-axis is the close relative to the top. Diamonds are “last straws”, dots are other events; the light-yellow background is the span from “last straw” to bottom in the previous three cycles; the vertical line is this cycle today. The COVID crash came on day 816 after the 2016 cycle’s top, beyond the x-axis, so it isn’t drawn.</p>
+<p>Three observations. First, the “last straws” that broke the camel’s back in the previous three cycles (the Bitstamp hack on 2015-01-05, the BCH fork hash war on 2018-11-15, the FTX collapse on 2022-11-08) all landed 333–401 days after the top and 9–30 days before the bottom; before they hit, MVRV was already at 0.83–1.13 and the market was already fragile.</p>
+<p>Second, they weren’t the only crashes in their bear markets. By 7-day drop, June 2022 (Celsius, Three Arrows) at −33% and May (LUNA) at −27% were both deeper than the FTX week in November (−22%); each of the previous three bear markets had 3–4 seven-day drops of ≥20% (table below). The one remembered as “the black swan” is simply the one that happened to sit next to the low.</p>
+<div class="tblwrap"><table id="g-t-crash" data-dyn></table></div>
+<p>Third, COVID was a different animal: it came from outside, hit 60 days before the 2016 cycle’s halving, was V-shaped, and didn’t break the 2018 bear-market bottom.</p>
+
+<h3 id="gsw-3">8.3 By the “black swan on schedule” logic: this cycle’s window <span class="livechip">Live</span></h3>
+<p>Moving the three “last straws” onto this cycle’s calendar with four clocks:</p>
+<div class="tblwrap"><table id="g-t-trig" data-dyn></table></div>
+<p data-live="p83"></p>
+<p class="small">At the time of writing (2026-10-08), a few known events sat in this window and were often cited as possible “excuses”: US CPI on 10-14; the FOMC meeting on 10-27 to 28, after the Fed’s 25bp hike on 9-16, its first hike since July 2023; and Mt.Gox’s repayment deadline on 10-31, with about 34,700 BTC still left as of October 2025. The backdrop: a 10-year Treasury yield of 5.3% (the highest since 2002) and oil above $100 because of the conflict in the Strait of Hormuz. But these were known events on the calendar, so strictly they weren’t black swans; by this logic they were only candidates that might be used as the excuse.</p>
+
+<h3 id="gsw-4">8.4 What this view gets right, and what needs correcting</h3>
+<p><b>What it gets right:</b> most crypto black swans are endogenous. LUNA, Three Arrows, Celsius and FTX were leverage and holes piled up during the bull market, forced to blow up once prices fell; the decline itself is why they blew up. So their timing is tied to the cycle phase, not random. Think of a sandpile: which grain sets off the avalanche is chance; that the pile reaches a critical state is not.</p>
+<p><b>Four things to correct:</b></p>
+<ol>
+<li><b>COVID was a different animal.</b> It came from outside, hit 60 days before the halving, was V-shaped and didn’t break the bottom; it doesn’t run on the same clock as FTX. Explaining it as “there is always a drop around the halving” doesn’t hold either: in any 240-day (about 8-month) window, bitcoin has had a ≥20% drawdown about 96% of the time, and a ≥40% drawdown about 57% of the time, so “a drop around every halving” is almost guaranteed and proves nothing. If you insist on watching for it, the next halving is estimated around 2028-04, pointing to late 2027 through May 2028, which has nothing to do with the current window.</li>
+<li><b>The black swan is a flock, not one bird.</b> A more accurate version of “a black swan always arrives on schedule” is: bear markets last about 12–13.5 months, and the final drop always finds an excuse. The regularity is in the length of the bear market, not in the event itself.</li>
+<li><b>Damage equals shock times fragility.</b> When the previous three last straws hit, MVRV was at 0.83–1.13: the average holder was already at or near a loss, and lending platforms and miners were on the edge of bankruptcy. <span data-live="p84m"></span>A shock of the same size would leave a much shallower crater now. Outside conditions such as macro tightening don’t decide the timing, but they do change the fragility.</li>
+<li><b>This cycle’s black swan may already have been “delivered” early.</b> Oct 10 was the largest liquidation in crypto history, about $19 billion; Feb 5 saw −13.1% in a day and −24.9% in 7 days, deeper than the FTX week. Jun 30 looks most like the straw that broke the camel’s back: that day Strategy sold bitcoin for the first time, Mt.Gox wallets moved out about $950 million, ETFs had 8 straight days of outflows, and this cycle’s lowest close as of 2026-10 ($58,525) printed, followed the next day by this cycle’s lowest point ($57,735). On the days-after-halving clock, Jun 30 is D801, inside the historical “last straw” range of D768–D911; Jul 1 is D802, inside the historical bottom range of D777–D924. The only mismatch is the distance from the top: 268 days, 95–142 days shorter than in the previous three cycles, because this cycle fell less and fell faster.</li>
+</ol>
+
+<h3 id="gsw-5">8.5 Two readings, and how to tell them apart <span class="livechip">Live</span></h3>
+<p><b>Scenario A: this cycle’s low so far (<span data-live="lowDate"></span>) was the bottom.</b> Supporting it: <span data-live="p85a"></span></p>
+<p><b>Scenario B: one last drop is still to come.</b> Supporting it: <span data-live="p85b"></span></p>
+<p>To tell them apart, watch these four things, all visible on this page:</p>
+<ol>
+<li>A close below this cycle’s low so far, <span data-live="lowPrice"></span>: scenario A is void, and the final drop is under way.</li>
+<li>Price falling below RP (MVRV &lt; 1; today RP is about <span data-live="rp"></span>): a match with the previous three bottoms, which by this logic means “the black swan has arrived”.</li>
+<li><span data-live="p85w3"></span></li>
+<li>Watch the RP curve (the chart in 5.3): if RP starts falling fast toward the previous three cycles’ −20%, real capitulation is happening, which is the most reliable on-chain sign of a bottom.</li>
+</ol>
+<p class="small" id="g-levels" data-dyn></p>
+<p class="small">RP drifts down a little as price falls, so if price really gets there, the corresponding levels will be slightly lower than above. This is the arithmetic of “a hit as hard as in earlier cycles”, not a price forecast.</p>
+
+<h3 id="gsw-6">8.6 How long until the market recovers <span class="livechip">Live</span></h3>
+<div class="tblwrap"><table id="g-t-rec" data-dyn></table></div>
+<div class="gchart tall" id="g-c7" data-chart></div>
+<p class="cap">The x-axis is days after the bottom (intraday low); the y-axis is close ÷ bottom price (log). Diamonds are the next halving, hollow circles the day price reached “the multiple this cycle needs to regain its previous high”, the horizontal dashed line is that multiple, and the vertical line is this cycle today.</p>
+<div class="tblwrap"><table id="g-t-scen" data-dyn></table></div>
+<div data-live="p86"></div>
+<div class="callout pri" data-live="p86c"></div>
+<div class="note">With only three samples, these dates are a sense of rhythm, not a forecast; nothing on this page is advice to buy or sell.</div>
+
+<h2 id="g8">9 · Every time you open the page, look in this order</h2>
+<ol>
+<li>Check the spread at the bottom of the main chart: only below 10% is there any talk of “synchronization”, and the lower it is, the more credible.</li>
+<li>Check where the two historical lines go next on the right: up means synchronized bullish, down means synchronized bearish.</li>
+<li>Check the red line’s position among the three: the middle is normal; the top or the bottom is a deviation, so think about how it might revert using the three ways in 3.4.</li>
+<li>Check tables 5 and 2: timing analogs are more reliable than price targets.</li>
+<li>When reading the scaled prices in table 6, always use the current RP; last week’s numbers have already changed.</li>
+<li>Check tables 7 and 8: which “last straw” analog dates are left (gray ones have passed), and the recovery timetable under each scenario.</li>
+<li>To send someone a particular view, click “Share” at the right of the tab bar; to quote a section of the Guide, click the <b>#</b> next to its heading.</li>
+<li>Finally, cross-check with other data, as Murphy himself insists.</li>
+</ol>
+<div class="note">This page is a visualization of historical data and an explanation of a method; it is not investment advice, and the author is not a licensed investment adviser. The cycle patterns rest on only three or four samples.</div>
+
+<h2 id="g9">10 · Glossary</h2>
+<div class="tblwrap"><table>
+<tr><th class="nw">Term</th><th class="nw">Chinese</th><th>In one line</th></tr>
+<tr><td class="nw">Three-line convergence</td><td class="nw">三线合一</td><td>Murphy’s halving-aligned MVRV overlay; a “convergence” is when the three lines stick together</td></tr>
+<tr><td class="nw">Halving</td><td class="nw">减半</td><td>Every 210,000 blocks the block subsidy halves, roughly every four years</td></tr>
+<tr><td class="nw">Block subsidy</td><td class="nw">区块奖励</td><td>The new coins a miner receives for each block, currently 3.125 BTC</td></tr>
+<tr><td class="nw">UTXO</td><td class="nw">未花费输出</td><td>Unspent Transaction Output: the basic unit of the Bitcoin ledger, one chunk of coins</td></tr>
+<tr><td class="nw">Realized Cap</td><td class="nw">已实现市值</td><td>The sum of each UTXO’s amount × its price when it last moved</td></tr>
+<tr><td class="nw">Realized Price, RP</td><td class="nw">已实现价格</td><td>Realized cap ÷ supply: the network’s average last-moved price</td></tr>
+<tr><td class="nw">MVRV</td><td class="nw">MVRV</td><td>Market Value to Realized Value = market cap ÷ realized cap = price ÷ RP</td></tr>
+<tr><td class="nw">NUPL</td><td class="nw">NUPL</td><td>Net Unrealized Profit/Loss = 1 − 1/MVRV, unrealized profit or loss as a share of market cap</td></tr>
+<tr><td class="nw">Capitulation</td><td class="nw">投降式抛售</td><td>Holders selling at a loss en masse, usually near the bottom</td></tr>
+<tr><td class="nw">Cost reset</td><td class="nw">成本重置</td><td>(this page’s term) capitulation pulling RP down</td></tr>
+<tr><td class="nw">STH / LTH</td><td class="nw">短期 / 长期持有者</td><td>Holders of less / more than about 155 days; another family of metrics Murphy uses, not part of the three-line convergence</td></tr>
+<tr><td class="nw">Drawdown</td><td class="nw">回撤</td><td>The decline from the prior high</td></tr>
+<tr><td class="nw">D number</td><td class="nw">D 数</td><td>Days since the halving; the halving day is D0</td></tr>
+<tr><td class="nw">Spread</td><td class="nw">三线离散度</td><td>(max − min of the three lines) ÷ their mean, used here to quantify “convergence”</td></tr>
+<tr><td class="nw">Scaled price</td><td class="nw">折算价</td><td>A historical line’s MVRV × the current RP</td></tr>
+<tr><td class="nw">UTC daily close</td><td class="nw">UTC 日收盘</td><td>The price at 00:00 UTC: 08:00 in Beijing, 8 pm the previous evening in New York during daylight saving time</td></tr>
+</table></div>
+
+<h2 id="g10">11 · Sources</h2>
+<ul class="refs">
+<li>Murphy, first proposal of the post-halving MVRV overlay (2022-12-24, in Chinese): <a href="https://x.com/Murphychen888/status/1606562657854959616" target="_blank" rel="noopener">x.com/Murphychen888/status/1606562657854959616</a></li>
+<li>Murphy, MVRV below 1 in months 29–33 (2023-03-02): <a href="https://x.com/Murphychen888/status/1631230984728510464" target="_blank" rel="noopener">x.com/Murphychen888/status/1631230984728510464</a></li>
+<li>Murphy, review and the two convergences (2023-11-16, pinned): <a href="https://x.com/Murphychen888/status/1725374664858652867" target="_blank" rel="noopener">x.com/Murphychen888/status/1725374664858652867</a></li>
+<li>Murphy, progress analysis of the “three-line convergence” indicator (2025-02-04): <a href="https://x.com/Murphychen888/status/1886983212225978465" target="_blank" rel="noopener">x.com/Murphychen888/status/1886983212225978465</a></li>
+<li>Murphy, “the margin in crypto is metaphysics” (2025-04-20): <a href="https://x.com/Murphychen888/status/1914149541693341968" target="_blank" rel="noopener">x.com/Murphychen888/status/1914149541693341968</a></li>
+<li>Murphy, the “metaphysical indicator” people most often ask him to update (2025-09-02): <a href="https://x.com/murphychen888/status/1963044274741903590" target="_blank" rel="noopener">x.com/murphychen888/status/1963044274741903590</a></li>
+<li>BlockBeats’ summary of Murphy’s MVRV overlay analysis (2026-06-28, in Chinese): <a href="https://www.bitget.com/zh-CN/news/detail/12560605480602" target="_blank" rel="noopener">bitget.com/zh-CN/news/detail/12560605480602</a></li>
+<li>Looknode’s online “halving MVRV overlay” indicator: <a href="https://www.looknode.com/charts?chartId=halvingMVRV" target="_blank" rel="noopener">looknode.com/charts?chartId=halvingMVRV</a></li>
+<li>News reports used in section 8:
+  Bitcoin.com, the 6-30 break below $58k and Strategy’s first sale (<a href="https://news.bitcoin.com/bitcoin-falls-below-58000-q2-2026/" target="_blank" rel="noopener">news.bitcoin.com/bitcoin-falls-below-58000-q2-2026</a>);
+  VanEck, what triggered the February 2026 sell-off (<a href="https://www.vaneck.com/us/en/blogs/digital-assets/matthew-sigel-what-triggered-bitcoins-major-selloff-in-february-2026/" target="_blank" rel="noopener">vaneck.com</a>);
+  Business Today, the $19 billion liquidation of Oct 10 (<a href="https://www.businesstoday.in/personal-finance/investment/story/crypto-crash-19-bn-wiped-out-as-trumps-100-china-tariff-sparks-largest-liquidation-in-history-497823-2025-10-11/" target="_blank" rel="noopener">businesstoday.in</a>);
+  Forklog, +24% in August (<a href="https://forklog.com/en/bitcoin-ends-august-up-24/" target="_blank" rel="noopener">forklog.com/en/bitcoin-ends-august-up-24</a>);
+  KuCoin, the Fed hike of 9-16 (<a href="https://kucoin.com/news/flash/bitcoin-slips-after-fed-s-first-rate-hike-since-2023" target="_blank" rel="noopener">kucoin.com</a>);
+  Cointelegraph, the early-October market, Treasury yields and the 10-14 CPI (<a href="https://cointelegraph.com/markets/btc-price-fights-to-reclaim-2026-open-three-things-to-know-in-bitcoin-this-week" target="_blank" rel="noopener">cointelegraph.com</a>);
+  the Federal Reserve’s October 2026 calendar (<a href="https://www.federalreserve.gov/newsevents/2026-october.htm" target="_blank" rel="noopener">federalreserve.gov/newsevents/2026-october.htm</a>);
+  Decrypt, Mt.Gox repayments pushed back to 2026-10-31 (<a href="https://decrypt.co/346053/mt-gox-pushes-back-bitcoin-repayments-by-another-year" target="_blank" rel="noopener">decrypt.co/346053</a>);
+  TechCrunch, the January 2015 Bitstamp hack (<a href="https://techcrunch.com/2015/01/05/bitstamp-bitcoin-exchange-hack/" target="_blank" rel="noopener">techcrunch.com</a>);
+  SiliconANGLE, the November 2018 crash during the BCH fork (<a href="https://siliconangle.com/2018/11/19/bitcoin-plunges-19-month-low-bitcoin-cash-chaos-continues-spook-investors/" target="_blank" rel="noopener">siliconangle.com</a>).</li>
+<li>Note: Murphy’s other “metaphysical” indicator, the “BTC trend-cycle method” (2025-11-16, three lines of 1-, 3- and 6-month turnover cost), has a similar name but is not the three-line convergence and is not replicated here: <a href="https://x.com/Murphychen888/status/1990223363361681917" target="_blank" rel="noopener">x.com/Murphychen888/status/1990223363361681917</a></li>
+<li>This page is an independent replication and test of Murphy’s method on public data; it is not Murphy’s official work and does not represent his views.</li>
+</ul>
+
+</article>
+</div>

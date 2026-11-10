@@ -1,0 +1,1716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BTC Three-Line Convergence · Halving-Aligned MVRV Overlay (Interactive)</title>
+<!--__META__-->
+<style>
+:root{
+  color-scheme: light;
+  --page:#f9f9f7; --surface:#fcfcfb; --ink:#0b0b0b; --ink2:#52514e; --muted:#898781;
+  --grid:#e1e0d9; --axis:#c3c2b7; --border:rgba(11,11,11,.10);
+  --red:#e34948; --green:#008300; --blue:#2a78d6; --gray:#898781;
+  --accent:#2a78d6; --band:rgba(237,161,0,.16); --band-line:#c98500;
+  --win:rgba(42,120,214,.07); --under:rgba(0,131,0,.10); --good:#006300; --warn-bg:#fff6df; --warn-ink:#6b4a00;
+  --chip:#f0efec; --chip-on:#0b0b0b; --chip-on-ink:#ffffff;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme: dark;
+    --page:#0d0d0d; --surface:#1a1a19; --ink:#ffffff; --ink2:#c3c2b7; --muted:#898781;
+    --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,.10);
+    --red:#e66767; --green:#008300; --blue:#3987e5; --gray:#898781;
+    --accent:#3987e5; --band:rgba(201,133,0,.22); --band-line:#c98500;
+    --win:rgba(57,135,229,.10); --under:rgba(12,163,12,.16); --good:#0ca30c; --warn-bg:#2a2412; --warn-ink:#f1d48a;
+    --chip:#2c2c2a; --chip-on:#ffffff; --chip-on-ink:#0b0b0b;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme: dark;
+  --page:#0d0d0d; --surface:#1a1a19; --ink:#ffffff; --ink2:#c3c2b7; --muted:#898781;
+  --grid:#2c2c2a; --axis:#383835; --border:rgba(255,255,255,.10);
+  --red:#e66767; --green:#008300; --blue:#3987e5; --gray:#898781;
+  --accent:#3987e5; --band:rgba(201,133,0,.22); --band-line:#c98500;
+  --win:rgba(57,135,229,.10); --under:rgba(12,163,12,.16); --good:#0ca30c; --warn-bg:#2a2412; --warn-ink:#f1d48a;
+  --chip:#2c2c2a; --chip-on:#ffffff; --chip-on-ink:#0b0b0b;
+}
+*{box-sizing:border-box}
+html{margin:0}
+body{margin:0;padding:0}
+body{background:var(--page);color:var(--ink);font:14px/1.55 system-ui,-apple-system,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif;-webkit-text-size-adjust:100%}
+a{color:var(--accent)}
+.wrap{max-width:1680px;margin:0 auto;padding:12px 16px 40px}
+header.top{display:flex;flex-wrap:wrap;align-items:flex-end;gap:8px 16px;margin-bottom:10px}
+header.top h1{font-size:20px;line-height:1.25;margin:0;font-weight:650;letter-spacing:.01em}
+header.top .sub{color:var(--ink2);font-size:13px}
+header.top .right{margin-left:auto;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tiles{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin:0 0 10px}
+.tile{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:6px 10px 7px;min-width:0}
+.tile .r1{display:flex;align-items:baseline;justify-content:space-between;gap:8px}
+.tile .k{color:var(--ink2);font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+.tile .v{font-size:17px;font-weight:650;white-space:nowrap}
+.tile .s{color:var(--muted);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media (max-width:1180px){.tiles{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:620px){.tiles{grid-template-columns:repeat(2,minmax(0,1fr))}.tile .r1{display:block}.tile .v{font-size:16px}}
+.tabbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;display:flex;align-items:center;gap:8px;background:var(--page);border-bottom:1px solid var(--border);margin-bottom:10px}
+.tabs{display:flex;gap:4px;flex:1;min-width:0;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabbar .btn{flex:0 0 auto;padding:4px 10px;font-size:12.5px}
+.tabs button{appearance:none;background:none;border:0;border-bottom:2px solid transparent;color:var(--ink2);font:inherit;font-weight:600;padding:6px 12px;cursor:pointer;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--ink)}
+.panel{display:none}
+.panel.on{display:block}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:10px 12px}
+.controls{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin-bottom:6px}
+.controls .grp{display:flex;align-items:center;gap:4px;flex-wrap:wrap}
+.controls .lbl{color:var(--ink2);font-size:12px;margin-right:2px}
+.chip{appearance:none;border:1px solid var(--border);background:var(--chip);color:var(--ink);border-radius:999px;padding:4px 11px;font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
+.chip:hover{border-color:var(--axis)}
+.chip[aria-pressed="true"]{background:var(--chip-on);color:var(--chip-on-ink);border-color:var(--chip-on)}
+.btn{appearance:none;border:1px solid var(--border);background:var(--surface);color:var(--ink);border-radius:8px;padding:6px 12px;font:inherit;font-size:13px;cursor:pointer;white-space:nowrap}
+.btn:hover{border-color:var(--axis)}
+.btn.primary{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.btn[disabled]{opacity:.5;cursor:default}
+label.ck{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--ink);cursor:pointer;white-space:nowrap}
+label.ck input{margin:0}
+.sw{display:inline-block;width:14px;height:12px;border-radius:3px;border:1px solid var(--border);vertical-align:-1px}
+.sw.band{background:var(--band)}.sw.win{background:var(--win)}.sw.under{background:var(--under)}
+input[type=range]{width:110px;vertical-align:middle}
+.chart{width:100%;height:640px;min-height:480px}
+.hint{color:var(--ink2);font-size:12.5px;margin-top:8px}
+.hint kbd{border:1px solid var(--border);border-bottom-width:2px;border-radius:4px;padding:0 5px;font:inherit;font-size:12px;background:var(--chip)}
+.status{font-size:12.5px;color:var(--ink2)}
+.status b{color:var(--ink)}
+.status .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--muted);margin-right:6px;vertical-align:baseline}
+.status .dot.ok{background:#0ca30c}.status .dot.err{background:#d03b3b}.status .dot.busy{background:#fab219}
+h2{font-size:16px;margin:22px 0 8px;font-weight:650}
+h3{font-size:14px;margin:16px 0 6px;font-weight:650}
+.tblwrap{overflow-x:auto;border:1px solid var(--border);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13px;font-variant-numeric:tabular-nums}
+th,td{padding:7px 10px;text-align:left;border-bottom:1px solid var(--grid);white-space:nowrap;vertical-align:top}
+th{color:var(--ink2);font-weight:600;font-size:12px;background:var(--surface);position:sticky;top:0}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right}
+td .sm{color:var(--muted);font-size:12px}
+.key{display:inline-block;width:14px;height:0;border-top:3px solid var(--gray);vertical-align:middle;margin-right:6px;border-radius:2px}
+.key.red{border-color:var(--red)}.key.green{border-color:var(--green)}.key.blue{border-color:var(--blue)}.key.gray{border-color:var(--gray)}
+.note{background:var(--warn-bg);color:var(--warn-ink);border-radius:10px;padding:10px 12px;font-size:13px;margin:10px 0}
+.prose{max-width:980px}
+.prose p,.prose li{color:var(--ink);font-size:14px}
+.prose li{margin:4px 0}
+.prose a,.prose code{overflow-wrap:anywhere;word-break:break-word}
+.prose code{background:var(--chip);border-radius:4px;padding:0 4px;font-size:12.5px}
+.muted{color:var(--muted)}
+.tt{font:12.5px/1.5 system-ui,-apple-system,"Segoe UI","Microsoft YaHei",sans-serif;color:var(--tt-ink)}
+.tt .hd{font-weight:650;margin-bottom:4px}
+.tt .hd span{font-weight:400;color:var(--tt-ink2)}
+.tt table{font-size:12.5px;width:auto}
+.tt th,.tt td{padding:2px 8px 2px 0;border:0;background:none;position:static}
+.tt th{font-size:11.5px;color:var(--tt-ink2);font-weight:500}
+.tt td.v{font-weight:650}
+.tt .ft{margin-top:4px;color:var(--tt-ink2);font-size:11.5px}
+.tt .est{color:var(--tt-ink2)}
+footer{margin-top:28px;color:var(--muted);font-size:12px}
+details.ctl>summary{display:none}
+.sm{font-size:12px;color:var(--muted)}
+.ed-only{display:none}
+body.ed-snap .ed-only{display:block}
+body.ed-snap #btn-update,body.ed-snap #btn-share,body.ed-snap .hlink,body.ed-snap #btn-csv,body.ed-snap #g-print-row,body.ed-snap #n-tools,body.ed-snap #n-share-p{display:none!important}
+.hlink{appearance:none;border:0;background:none;color:var(--muted);font:inherit;font-size:.78em;font-weight:500;cursor:pointer;margin-left:6px;padding:0 5px;border-radius:6px;opacity:0;transition:opacity .15s;vertical-align:1px}
+h2:hover>.hlink,h3:hover>.hlink,.hlink:focus-visible{opacity:1}
+.hlink:hover{color:var(--accent);background:var(--chip)}
+@media (hover:none){.hlink{opacity:.6}}
+.fab{position:fixed;right:16px;bottom:calc(18px + env(safe-area-inset-bottom,0px));z-index:30;appearance:none;border:1px solid var(--border);background:var(--surface);color:var(--ink);border-radius:999px;padding:8px 14px;font:inherit;font-size:13px;box-shadow:0 4px 18px rgba(0,0,0,.14);cursor:pointer;display:none}
+.fab.on{display:block}
+.toast{position:fixed;left:50%;bottom:calc(22px + env(safe-area-inset-bottom,0px));transform:translateX(-50%) translateY(20px);background:var(--ink);color:var(--page);padding:9px 16px;border-radius:999px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s,transform .2s;z-index:50;max-width:calc(100vw - 32px);text-align:center}
+.toast.on{opacity:1;transform:translateX(-50%) translateY(0)}
+.pop{position:fixed;top:0;right:0;bottom:0;left:0;z-index:40;background:rgba(0,0,0,.35);display:flex;align-items:flex-start;justify-content:center;padding:72px 16px 16px}
+.pop[hidden]{display:none}
+.pop .box{background:var(--surface);color:var(--ink);border:1px solid var(--border);border-radius:14px;box-shadow:0 12px 40px rgba(0,0,0,.25);width:min(560px,100%);padding:16px 16px 14px}
+.pop .box h3{margin:0 0 6px;font-size:15px}
+.pop .box p{margin:4px 0 10px;color:var(--ink2);font-size:13px;line-height:1.6}
+.pop input{width:100%;font:13px/1.4 ui-monospace,SFMono-Regular,Consolas,monospace;padding:8px 10px;border:1px solid var(--border);border-radius:8px;background:var(--page);color:var(--ink)}
+.pop .row{display:flex;gap:8px;justify-content:flex-end;margin-top:10px;flex-wrap:wrap}
+/* ---------- guide ---------- */
+.guide{display:grid;grid-template-columns:230px minmax(0,1fr);gap:30px;align-items:start}
+.gtoc{position:sticky;top:52px;max-height:calc(100vh - 64px);overflow:auto;font-size:13px;border-left:2px solid var(--grid);padding:2px 0 2px 12px}
+.gtoc a{display:block;color:var(--ink2);text-decoration:none;padding:3px 0;line-height:1.35}
+.gtoc a:hover{color:var(--ink)}
+.gtoc a.h3{padding-left:12px;font-size:12.5px;color:var(--muted)}
+.gtoc .tt0{font-weight:650;color:var(--ink);margin-bottom:4px}
+.gbody{max-width:920px;min-width:0}
+.gbody h1{font-size:24px;margin:4px 0 6px;font-weight:700}
+.gbody .gsub{color:var(--ink2);margin:0 0 8px}
+.gbody h2{font-size:19px;margin:34px 0 10px;padding-top:12px;border-top:1px solid var(--grid)}
+.gbody h3{font-size:15.5px;margin:22px 0 6px}
+.gbody p,.gbody li{font-size:15px;line-height:1.75}
+.gbody p{margin:8px 0}
+.gbody ol,.gbody ul{padding-left:22px}
+.gbody .small{font-size:13px;color:var(--ink2)}
+.gbody .tblwrap{margin:10px 0}
+.gbody td{white-space:normal}
+.gbody td.nw,.gbody th.nw{white-space:nowrap}
+.gbody table.score td{font-size:13px}
+.callout{border-left:4px solid var(--axis);background:var(--chip);border-radius:0 10px 10px 0;padding:10px 14px;margin:14px 0;font-size:14.5px;line-height:1.75}
+.callout.pri{border-left-color:var(--accent)}
+.callout.warn{border-left-color:#c98500;background:var(--warn-bg);color:var(--warn-ink)}
+.formula{font-family:ui-monospace,SFMono-Regular,Consolas,"Microsoft YaHei",monospace;font-size:13.5px;background:var(--chip);border-radius:8px;padding:10px 14px;margin:10px 0;line-height:1.9;overflow-x:auto}
+.gchart{width:100%;height:330px;margin:10px 0 2px;border:1px solid var(--border);border-radius:10px;background:var(--surface)}
+.gchart.tall{height:430px}
+.cap{font-size:13px !important;color:var(--ink2);margin:4px 0 14px !important;line-height:1.6 !important}
+.livechip{display:inline-block;font-size:11px;font-weight:600;border:1px solid var(--accent);color:var(--accent);border-radius:999px;padding:0 7px;line-height:1.6;vertical-align:2px;margin-left:4px}
+.livebox{border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:0 12px 12px 0;background:var(--surface);padding:10px 14px;margin:10px 0;font-size:14px;line-height:1.7}
+.livebox .row{display:flex;flex-wrap:wrap;gap:2px 18px}
+.livebox b{font-weight:650}
+.verdict{white-space:nowrap;font-weight:600}
+.gbody td.verdict{white-space:nowrap}
+.gbody table.score td.verdict{white-space:normal;min-width:7.5em}
+.btn.sm{padding:3px 9px;font-size:12.5px}
+ul.refs li{font-size:13.5px;word-break:break-all}
+@media (max-width:1100px){.guide{grid-template-columns:minmax(0,1fr);gap:12px}.gtoc{position:static;max-height:none;border:1px solid var(--border);border-radius:10px;padding:8px 12px;background:var(--surface)}.gtoc a.h3{display:none}}
+@media (max-width:620px){.gchart{height:290px}.gchart.tall{height:370px}.gbody p,.gbody li{font-size:14.5px}}
+@media print{
+  @page{size:A4;margin:13mm 11mm 14mm 11mm}
+  body.print-guide{background:#fff !important}
+  body.print-guide .wrap{max-width:none;padding:0}
+  body.print-guide header.top,body.print-guide .tiles,body.print-guide .tabbar,body.print-guide footer,body.print-guide .panel:not(#tab-guide),body.print-guide .noprint{display:none !important}
+  body.print-guide #tab-guide{display:block !important}
+  body.print-guide .guide{display:block}
+  body.print-guide .gtoc{position:static;max-height:none;border:1px solid #ddd;border-radius:8px;padding:8px 12px;margin:0 0 10px;columns:2;column-gap:24px}
+  body.print-guide .gtoc a.h3{display:block}
+  body.print-guide .gbody{max-width:none}
+  body.print-guide .gchart{break-inside:avoid;page-break-inside:avoid;border-color:#ddd}
+  body.print-guide .callout,body.print-guide .formula,body.print-guide .livebox{break-inside:avoid;page-break-inside:avoid}
+  body.print-guide h2,body.print-guide h3{break-after:avoid;page-break-after:avoid}
+  body.print-guide tr{break-inside:avoid;page-break-inside:avoid}
+  body.print-guide .tblwrap{overflow:visible;border-color:#ddd}
+  body.print-guide th{position:static}
+  body.print-guide a{color:inherit;text-decoration:none}
+  body.print-guide .gbody p,body.print-guide .gbody li{font-size:13.5px;line-height:1.7}
+  body.print-guide .gbody h2{font-size:17px;margin-top:22px}
+}
+@media (max-width:720px){
+  header.top .right{gap:6px}
+  header.top .right .btn{padding:5px 10px;font-size:12.5px}
+  header.top .status{flex-basis:100%;font-size:11.5px}
+  header.top .sub{display:none}
+  .tabs .tl{display:none}
+  .tabs button{padding:6px 9px}
+  .tabs{-webkit-mask-image:linear-gradient(90deg,transparent 0,#000 9px,#000 calc(100% - 16px),transparent 100%);mask-image:linear-gradient(90deg,transparent 0,#000 9px,#000 calc(100% - 16px),transparent 100%)}
+  header.top h1{font-size:17px}
+  .tiles{display:flex;overflow-x:auto;gap:8px;padding-bottom:2px;scroll-snap-type:x proximity}
+  .tile{flex:0 0 auto;min-width:150px;scroll-snap-align:start}
+  .tile .r1{display:block}
+  details.ctl>summary{display:block;cursor:pointer;color:var(--ink2);font-size:13px;padding:2px 0 6px;list-style-position:inside}
+  .hint{font-size:12px}
+}
+a.btn{display:inline-block;text-decoration:none}
+#btn-lang{font-weight:600}
+.tile{max-width:72vw}
+.langhint{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:7px 10px 7px 12px;margin:0 0 10px;font-size:13px;color:var(--ink2)}
+.langhint a{font-weight:600}
+.langhint .x{margin-left:auto;appearance:none;background:none;border:0;color:var(--muted);font:inherit;font-size:18px;line-height:1;cursor:pointer;padding:0 4px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="langhint noprint" id="lang-hint" lang="zh-CN" hidden><span>本页有中文版。</span><a href="__LANG_ALT__" id="lang-hint-go" hreflang="zh-CN">切换到中文 →</a><button class="x" id="lang-hint-x" type="button" aria-label="关闭">×</button></div>
+    <header class="top">
+    <div>
+      <h1>BTC Three-Line Convergence · Halving-Aligned MVRV Overlay</h1>
+      <div class="sub">Murphy’s (@Murphychen888) method: stack each cycle’s post-halving MVRV so that halving day = day 0. All dates are UTC days. First time here? Start with the “Guide” tab.</div>
+    </div>
+    <div class="right">
+      <span class="status" id="st-line" data-dyn></span>
+      <button class="btn primary" id="btn-update" title="Needs internet: pulls the latest daily data from CoinMetrics / Bitstamp and merges it in">Update data</button>
+      <a class="btn" id="btn-lang" href="__LANG_ALT__" hreflang="zh-CN" lang="zh-CN" title="切换到中文版">中文</a>
+      <button class="btn" id="btn-theme" title="Switch between light and dark">Dark</button>
+    </div>
+  </header>
+
+  <section class="tiles" id="tiles" data-dyn></section>
+
+  <div class="tabbar">
+  <nav class="tabs" role="tablist">
+    <button role="tab" aria-selected="true" data-tab="overlay">Three lines<span class="tl"> (halving-aligned)</span></button>
+    <button role="tab" aria-selected="false" data-tab="history">Full history<span class="tl"> (price + MVRV)</span></button>
+    <button role="tab" aria-selected="false" data-tab="tables">Key dates</button>
+    <button role="tab" aria-selected="false" data-tab="guide">Guide</button>
+    <button role="tab" aria-selected="false" data-tab="notes">Data &amp; updates</button>
+  </nav>
+  <button class="btn noprint" id="btn-share" title="Create a link to this exact view: anyone who opens it sees what you see now">Share</button>
+  </div>
+
+  <!-- ============ TAB 1 ============ -->
+  <section class="panel on" id="tab-overlay">
+    <div class="card">
+      <details class="ctl" id="ctl-overlay" open><summary>Chart options (view / range / y-axis / lower panel / markers)</summary>
+      <div class="controls">
+        <div class="grp"><span class="lbl">View</span>
+          <button class="chip" data-persp="2024" aria-pressed="true" title="Red = 2024 (this cycle), green = 2020, blue = 2016, gray = 2012">This cycle (2024 halving)</button>
+          <button class="chip" data-persp="2020" aria-pressed="false" title="Replay the last cycle: red = 2020, green = 2012, blue = 2016 (the colors of Murphy’s 2022–2023 charts)">Last cycle (2020 halving)</button>
+        </div>
+        <div class="grp"><span class="lbl">Range</span>
+          <button class="chip" data-range="all">Full cycle</button>
+          <button class="chip" data-range="bottom">Bottom window D700–D1100</button>
+          <button class="chip" data-range="top">Top window D250–D650</button>
+          <button class="chip" data-range="now">Latest ±120 days</button>
+        </div>
+        <div class="grp"><span class="lbl">Y-axis</span>
+          <button class="chip" data-ylog="0" aria-pressed="true">Linear</button>
+          <button class="chip" data-ylog="1" aria-pressed="false">Log</button>
+        </div>
+        <div class="grp"><span class="lbl">Lower panel</span>
+          <button class="chip" data-p2="dd" aria-pressed="true">Drawdown</button>
+          <button class="chip" data-p2="price" aria-pressed="false">Price</button>
+          <button class="chip" data-p2="off" aria-pressed="false">Hide</button>
+        </div>
+        <div class="grp">
+          <label class="ck"><input type="checkbox" id="ck-band" checked> <span class="sw band"></span>Convergence band</label>
+          <label class="ck" title="(highest − lowest of the three lines) ÷ their mean; below this threshold counts as “converged”">Threshold <input type="range" id="rg-thr" min="4" max="20" step="1" value="10"> <b id="thr-val">10%</b></label>
+        </div>
+        <div class="grp">
+          <label class="ck"><input type="checkbox" id="ck-win" checked> <span class="sw win"></span>Murphy time windows</label>
+          <label class="ck"><input type="checkbox" id="ck-marks" checked> Top/bottom markers</label>
+        </div>
+        <div class="grp"><button class="chip" id="btn-murphy" title="Keeps only the red, green and blue lines, turns off the lower panel and markers, x-axis from 2024-05: the same look as Murphy’s own chart">Murphy’s chart style</button><button class="chip" id="btn-reset-view" title="Forget the saved view, switches, zoom and scroll position and return to the defaults">Reset view</button></div>
+      </div>
+      </details>
+      <div id="chart-overlay" class="chart" data-chart></div>
+      <div class="hint">How to use: <kbd>wheel</kbd> zooms the time axis · <kbd>drag</kbd> pans · <kbd>Shift</kbd>+<kbd>wheel</kbd>/<kbd>drag</kbd> zooms/pans the y-axis · the slider at the bottom sets the range · click a legend item to hide that line · hover to see each line’s <b>actual date</b>, MVRV and price. On a phone: pinch to zoom, drag with one finger.<br>Your tab, view, switches, threshold, hidden lines, zoom and scroll position are <b>remembered automatically</b> (only in your own browser) and restored next time; to start over, click “Reset view” above.</div>
+    </div>
+    <div class="note" id="est-note" data-dyn style="display:none"></div>
+  </section>
+
+  <!-- ============ TAB 2 ============ -->
+  <section class="panel" id="tab-history">
+    <div class="card">
+      <div class="controls">
+        <div class="grp"><span class="lbl">Range</span>
+          <button class="chip" data-hrange="all">All</button>
+          <button class="chip" data-hrange="2012">From 2012</button>
+          <button class="chip" data-hrange="2020">From 2020</button>
+          <button class="chip" data-hrange="2y">Last 2 years</button>
+        </div>
+      </div>
+      <div id="chart-history" class="chart" data-chart></div>
+      <div class="hint">Top: BTC daily close (log) and the realized price RP (= price ÷ MVRV, the network’s average cost basis). Bottom: MVRV (log). Vertical lines = the four halvings; <span class="sw under"></span> light-green bands = days with MVRV &lt; 1 (price below the network’s cost basis); ▲▼ = each cycle’s intraday high / low.</div>
+    </div>
+  </section>
+
+  <!-- ============ TAB 3 ============ -->
+  <section class="panel" id="tab-tables">
+    <div class="controls">
+      <button class="btn" id="btn-csv">Export the halving-aligned data (CSV)</button>
+      <span class="status">Every number below is computed live in your browser from the embedded data and recomputed after an online update.</span>
+    </div>
+    <h2 id="t1">1 · Key dates of each cycle</h2>
+    <div class="tblwrap"><table id="tb-cycles" data-dyn></table></div>
+    <h2 id="t2">2 · Historical milestones moved onto this cycle’s calendar</h2>
+    <div class="hint" style="margin:0 0 8px">Method: date in this cycle = 2024-04-20 + the milestone’s days after its own halving (D). The last column says whether that date is still ahead or already passed.</div>
+    <div class="tblwrap"><table id="tb-map" data-dyn></table></div>
+    <h2 id="t3">3 · Convergence periods (current view and threshold, with what followed)</h2>
+    <div class="hint" style="margin:0 0 8px" id="tb-band-hint" data-dyn></div>
+    <div class="tblwrap"><table id="tb-bands" data-dyn></table></div>
+    <h2 id="t4">4 · Periods when all three historical lines were <b>simultaneously</b> below MVRV 1</h2>
+    <div class="hint" style="margin:0 0 8px">Computed from the complete 2012 / 2016 / 2020 cycles. Murphy’s “months 29–33 after the halving” means 28–33 months elapsed (about D852–D1004); every period below falls inside it.</div>
+    <div class="tblwrap"><table id="tb-below" data-dyn></table></div>
+    <h2 id="t5">5 · Timing analogs for this cycle’s bear-market bottom (four methods × three cycles)</h2>
+    <div class="hint" style="margin:0 0 8px" id="tb-analog-hint" data-dyn></div>
+    <div class="tblwrap"><table id="tb-analog" data-dyn></table></div>
+    <h2 id="t6">6 · Murphy-style scaling: historical MVRV × today’s RP</h2>
+    <div class="hint" style="margin:0 0 8px" id="tb-murphy-hint" data-dyn></div>
+    <div class="tblwrap"><table id="tb-murphy" data-dyn></table></div>
+    <h2 id="t7">7 · Where today sits in earlier cycles, and when the “last straw” fell</h2>
+    <div class="hint" style="margin:0 0 8px" id="tb-today-hint" data-dyn></div>
+    <div class="tblwrap"><table id="tb-today" data-dyn></table></div>
+    <h3 id="t7-2">7.2 Famous crashes placed on the cycle clock</h3>
+    <div class="hint" style="margin:0 0 8px">“To bottom” = days between the event and that cycle’s bear-market bottom (intraday low); this cycle uses its lowest point so far. “Worst within 7 d” = the lowest price in the 8 days from the event ÷ the previous day’s close − 1; “further to bottom” = the bottom ÷ the previous day’s close − 1. The “last straw” is the event closest to the bottom, the one that drove price to the low. Event names are my labels; every number is computed live from the data.</div>
+    <div class="tblwrap"><table id="tb-swan" data-dyn></table></div>
+    <h3 id="t7-3">7.3 The three “last straws” moved onto this cycle’s calendar with four clocks</h3>
+    <div class="hint" style="margin:0 0 8px">Same method as table 5, with the “bottom” replaced by the event that broke the camel’s back. Gray = dates that have already passed.</div>
+    <div class="tblwrap"><table id="tb-trig" data-dyn></table></div>
+    <h3 id="t7-4">7.4 How many 7-day drops of ≥20% each bear market had</h3>
+    <div class="hint" style="margin:0 0 8px">Window: from the cycle top (intraday high) to 30 days after the bottom; for this cycle, up to the latest data. Drops less than 21 days apart count as one, taking the deepest day. This answers “is the black swan one bird or a flock?”</div>
+    <div class="tblwrap"><table id="tb-crash" data-dyn></table></div>
+    <h2 id="t8">8 · How long recovery took after the bottom</h2>
+    <div class="hint" style="margin:0 0 8px">Days are counted from each cycle’s bottom (intraday low); multiples use closing prices. This cycle’s “bottom” is its lowest point so far; if a new low is made, this column and scenario A below switch to it automatically.</div>
+    <div class="tblwrap"><table id="tb-rec" data-dyn></table></div>
+    <h3 id="t8-2">8.2 Applied to this cycle: two scenarios</h3>
+    <div class="hint" style="margin:0 0 8px">Dates = the assumed bottom + the min ~ max of the matching day counts in the previous three cycles. With only three samples, and swings shrinking every cycle, this is a sense of rhythm, not a forecast.</div>
+    <div class="tblwrap"><table id="tb-scen" data-dyn></table></div>
+    <div class="hint" id="tb-levels" data-dyn></div>
+  </section>
+
+  <!-- ============ TAB 4 · 讲透三线合一 ============ -->
+  <section class="panel" id="tab-guide">
+<!--__GUIDE__-->
+  </section>
+
+  <!-- ============ TAB 5 · 数据与更新 ============ -->
+  <section class="panel" id="tab-notes">
+    <div class="prose">
+      <p class="small">How to read the charts, what every table column means, how the method works and its track record are all in the “Guide” tab. This tab covers data sources, updates, privacy and licensing.</p>
+      <div class="note">This page only visualizes historical data and is not investment advice; the author is not a licensed investment adviser. The cycle patterns rest on just three or four samples, so their statistical weight is limited.</div>
+      <div class="note ed-only" id="n-snap"></div>
+
+      <h2 id="n1">Data sources and definitions</h2>
+      <ul>
+        <li><b>MVRV and daily close:</b> Coin Metrics Community Data (metrics <code>CapMVRVCur</code> and <code>PriceUSD</code>). A day’s value is the value at the end of that UTC day (00:00 UTC). This data is licensed CC BY-NC 4.0: non-commercial use only.</li>
+        <li><b>Intraday high / low:</b> Bitstamp BTC/USD daily candles (used from 2012-11-28; earlier trading was too thin; no data for 2015-01-06~08 while the exchange was down).</li>
+        <li><b>Halving times:</b> the timestamps of blocks 210,000 / 420,000 / 630,000 / 840,000, checked against mempool.space; the next halving date is extrapolated from this cycle’s average block time and may be off by a few weeks.</li>
+        <li><b>Cross-check:</b> compared day by day with Looknode (the online version of Murphy’s indicator, Glassnode data): since 2012 the median MVRV difference is about 0.1–0.3%, and every cycle’s MVRV low and the dates MVRV fell below / regained 1 match exactly; the values Murphy quotes in his posts (e.g. MVRV 2.27 on 2025-02-04, RP ≈ $43.8k on 2025-04-20) match too. Data vendors use different price sources, so a few very volatile days differ by 1–4%, which is normal. Every number in every table on this page was also computed by a separate Python program and checked item by item.</li>
+      </ul>
+
+      <h2 id="n2">How the data updates</h2>
+      <ul>
+        <li><b>Automatic:</b> when the page opens (on by default; see the checkbox below) it pulls the last few days of daily data from the public Coin Metrics and Bitstamp APIs and appends them to the embedded data; offline, it silently skips this and the page still works. The new data is kept in your own browser, so it is still there the next time you open the page offline.</li>
+        <li><b>Manual:</b> click “Update data” at the top right.</li>
+        <li><b>Keep an offline copy:</b> after updating, click “Save as new HTML” to download a single file with the latest data embedded; double-click it to open offline, or copy it to another computer.</li>
+        <li><b>Why the latest data is yesterday:</b> Coin Metrics publishes a day only after the UTC day ends. Today’s unfinished price appears on the main chart as a hollow dot with a dashed line, labeled “intraday estimate”, and is left out of every table.</li>
+        <li id="n-repo" hidden></li>
+      </ul>
+      <p id="n-tools">
+        <label class="ck"><input type="checkbox" id="ck-auto"> Update automatically when the page opens (silently skipped offline)</label>
+        &nbsp; <button class="btn" id="btn-export">Save as new HTML (current data embedded)</button>
+        &nbsp; <button class="btn" id="btn-clear">Clear the data added on this device</button>
+      </p>
+      <div class="status" id="st-detail" data-dyn></div>
+
+      <h2 id="n3">Remembering your view, and sharing</h2>
+      <p>The tab you were on, the main chart’s view and switches, the convergence threshold, lines hidden from the legend, the zoom of both big charts (including the y-axis zoomed with Shift+wheel) and the scroll position of each tab are saved to <b>this browser of yours</b> after every change and before the page closes, and restored next time. A different device, a different browser or a private window starts from the defaults. The theme (dark / light) and the “update automatically” switch are remembered too.</p>
+      <p id="n-share-p">To show someone exactly what you see, click “Share” at the right of the tab bar and send the link; the <b>#</b> next to each heading in the Guide copies a link straight to that section. A link only records where and how you are looking, nothing personal.</p>
+      <p><button class="btn" id="btn-reset-view2">Reset view</button> <span class="sm">(clears only the remembered view, not data already updated on this device)</span></p>
+
+      <h2 id="n4">Privacy</h2>
+      <p>This page has no analytics, ads or cookies and collects no data; every calculation happens in your browser. The remembered view and the data pulled online stay only in your own browser (localStorage) and are never uploaded anywhere. Online updates contact just two public data APIs: <code>community-api.coinmetrics.io</code> and <code>www.bitstamp.net</code>.</p>
+
+      <h2 id="n5">License and credits</h2>
+      <ul>
+        <li><b>Method:</b> Murphy (<a href="https://x.com/Murphychen888" target="_blank" rel="noopener">@Murphychen888</a>)’s “three-line convergence” (三线合一, the halving-aligned MVRV overlay). This page is an independent replication and test built on public data; it is not Murphy’s official work and does not represent his views.</li>
+        <li><b>Data:</b> <a href="https://coinmetrics.io/community-network-data/" target="_blank" rel="noopener">Coin Metrics Community Data</a> (<a href="https://creativecommons.org/licenses/by-nc/4.0/" target="_blank" rel="noopener">CC BY-NC 4.0</a>); the public Bitstamp daily OHLC API; <a href="https://mempool.space" target="_blank" rel="noopener">mempool.space</a> (blocks and halving times).</li>
+        <li><b>Charts:</b> Apache ECharts 5.6.0 (Apache License 2.0; the license notice is kept in the embedded code).</li>
+        <li><b>Use:</b> feel free to share, quote and save it locally. Because the Coin Metrics data license is non-commercial, please don’t use this page or its data commercially.</li>
+      </ul>
+
+      <h2 id="n6">Sources</h2>
+      <ul>
+        <li>Murphy, progress analysis of the “three-line convergence” indicator (2025-02-04, Chinese): <a href="https://x.com/Murphychen888/status/1886983212225978465" target="_blank" rel="noopener">x.com/Murphychen888/status/1886983212225978465</a></li>
+        <li>Murphy, first proposal of the post-halving MVRV overlay (2022-12-24): <a href="https://x.com/Murphychen888/status/1606562657854959616" target="_blank" rel="noopener">x.com/Murphychen888/status/1606562657854959616</a>; review and the “convergence” buy zones (2023-11-16): <a href="https://x.com/Murphychen888/status/1725374664858652867" target="_blank" rel="noopener">…/1725374664858652867</a></li>
+        <li>Murphy, follow-ups on 2025-04-20 / 2025-09-02: <a href="https://x.com/Murphychen888/status/1914149541693341968" target="_blank" rel="noopener">…/1914149541693341968</a>, <a href="https://x.com/murphychen888/status/1963044274741903590" target="_blank" rel="noopener">…/1963044274741903590</a></li>
+        <li>BlockBeats’ summary of Murphy’s MVRV overlay analysis (2026-06-28, Chinese): <a href="https://www.bitget.com/zh-CN/news/detail/12560605480602" target="_blank" rel="noopener">bitget.com/zh-CN/news/detail/12560605480602</a></li>
+        <li>Looknode’s online version of the indicator: <a href="https://www.looknode.com/charts?chartId=halvingMVRV" target="_blank" rel="noopener">looknode.com/charts?chartId=halvingMVRV</a></li>
+        <li>The news reports cited in section 8 of the Guide are listed in its last section, “Sources”.</li>
+      </ul>
+    </div>
+  </section>
+
+  <footer id="foot" data-dyn></footer>
+  <div class="pop noprint" id="share-pop" hidden>
+    <div class="box" role="dialog" aria-modal="true" aria-labelledby="share-title">
+      <h3 id="share-title">Share this view</h3>
+      <p id="share-note">Anyone who opens this link sees what you see now: the same tab, view, switches and zoom; in the Guide or the key-dates tables it also jumps straight to the section you are reading.</p>
+      <input id="share-url" readonly>
+      <div class="row"><button class="btn" id="share-close">Close</button><button class="btn" id="share-native" hidden>Share via system…</button><button class="btn primary" id="share-copy">Copy link</button></div>
+    </div>
+  </div>
+  <div class="toast noprint" id="toast" role="status" aria-live="polite"></div>
+  <button class="fab noprint" id="fab-top" title="Back to the top of the page (the tabs and the Share button are up there)">↑ Top</button>
+</div>
+
+<script>/*__ECHARTS__*/</script>
+<script id="sx-data" type="application/json">/*__DATA__*/</script>
+<script>
+(function(){
+'use strict';
+var DAY = 86400000, X_DAYS = 1470, HIST_PAD = 240, LS_DELTA = 'sx_delta_v1', LS_PREF = 'sx_pref_v1', LS_VIEW = 'sx_view_v1';
+var RAW = JSON.parse(document.getElementById('sx-data').textContent);
+
+/* ---------- small utils ---------- */
+function parseD(s){ return Date.UTC(+s.slice(0,4), +s.slice(5,7)-1, +s.slice(8,10)); }
+function fmtD(ms){ return new Date(ms).toISOString().slice(0,10); }
+function addMonths(ms, k){ var d=new Date(ms); return Date.UTC(d.getUTCFullYear(), d.getUTCMonth()+k, d.getUTCDate()); }
+function $(id){ return document.getElementById(id); }
+function usd(v, dp){ if(v==null||isNaN(v)) return '—'; if(dp==null) dp = v>=1000?0:(v>=10?2:(v>=1?2:4)); return '$'+v.toLocaleString('en-US',{minimumFractionDigits:dp,maximumFractionDigits:dp}); }
+function usdK(v){ if(v==null||isNaN(v)) return '—'; if(v>=1e6) return '$'+(+(v/1e6).toFixed(2))+'M'; if(v>=1000) return '$'+(+(v/1000).toFixed(1))+'k'; if(v>=1) return '$'+(+v.toFixed(2)); return '$'+(+v.toPrecision(2)); }
+function num(v,dp){ return (v==null||isNaN(v))?'—':v.toFixed(dp==null?3:dp); }
+function pct(v,dp){ return (v==null||isNaN(v))?'—':(v*100).toFixed(dp==null?1:dp)+'%'; }
+function sgn(n){ return (n>0?'+':'')+n; }
+function esc(s){ return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+function lsGet(k){ try{ var s=localStorage.getItem(k); return s?JSON.parse(s):null; }catch(e){ return null; } }
+function lsSet(k,v){ try{ localStorage.setItem(k, JSON.stringify(v)); return true; }catch(e){ return false; } }
+function lsDel(k){ try{ localStorage.removeItem(k); }catch(e){} }
+function cssVar(n){ return getComputedStyle(document.documentElement).getPropertyValue(n).trim(); }
+
+/* ---------- model ---------- */
+var M = null;      // current model
+var EST = [];      // intraday estimates (not official): [{idx,date,close,hi,lo,mvrv}]
+function buildModel(raw, delta){
+  var m = { startMs: parseD(raw.start), mvrv: raw.mvrv.slice(), close: raw.close.slice(), hi: raw.hi.slice(), lo: raw.lo.slice(), embeddedLast: raw.meta.last_date, deltaDays: 0, revised: 0 };
+  if (delta && delta.rows){
+    var keys = Object.keys(delta.rows).sort();
+    // 本机缓存若比文件内嵌数据还旧，就只用它来“往后补天数”，不拿它覆盖文件里已有的日期
+    var allowRevise = !!(delta.fetched_utc && raw.meta.built_utc && delta.fetched_utc > raw.meta.built_utc);
+    for (var i=0;i<keys.length;i++){
+      var d = keys[i], r = delta.rows[d], idx = Math.round((parseD(d)-m.startMs)/DAY);
+      if (!r || !(r[0]>0) || !(r[1]>0) || idx<0) continue;
+      if (idx < m.mvrv.length){
+        if (!allowRevise) continue;
+        if (Math.abs(m.mvrv[idx]-r[0])>1e-9 || Math.abs(m.close[idx]-r[1])>1e-9) m.revised++;
+        m.mvrv[idx]=r[0]; m.close[idx]=r[1]; if(r[2]!=null){m.hi[idx]=r[2]; m.lo[idx]=r[3];}
+      } else if (idx === m.mvrv.length){
+        m.mvrv.push(r[0]); m.close.push(r[1]); m.hi.push(r[2]==null?null:r[2]); m.lo.push(r[3]==null?null:r[3]); m.deltaDays++;
+      } else break; // 出现断档就停，保证日期连续
+    }
+  }
+  m.n = m.mvrv.length;
+  m.lastIdx = m.n-1;
+  m.date = function(i){ return fmtD(m.startMs + i*DAY); };
+  m.idxOf = function(s){ return Math.round((parseD(s)-m.startMs)/DAY); };
+  m.lastDate = m.date(m.lastIdx);
+  // derived: running ATH (close) & drawdown
+  m.dd = new Array(m.n); var ath=0;
+  for (var j=0;j<m.n;j++){ if(m.close[j]>ath) ath=m.close[j]; m.dd[j]=m.close[j]/ath-1; }
+  m.rpNow = m.close[m.lastIdx]/m.mvrv[m.lastIdx];
+  // cycles
+  m.cycles = raw.halvings.map(function(h){ return {id:h.id, hDate:h.date, hMs:parseD(h.date), hIdx:m.idxOf(h.date), block:h.block, utc:h.utc}; });
+  m.cycles.forEach(function(c,k){ c.k=k; c.endIdx = (k+1<m.cycles.length)? m.cycles[k+1].hIdx-1 : m.lastIdx; c.len=c.endIdx-c.hIdx+1; c.complete = k+1<m.cycles.length; });
+  m.cycles.forEach(function(c){ c.ev = cycleEvents(m,c); });
+  return m;
+}
+function argBest(arr, a, b, cmp){ var best=-1; for(var i=a;i<=b;i++){ var v=arr[i]; if(v==null) continue; if(best<0||cmp(v,arr[best])) best=i; } return best; }
+function cycleEvents(m,c){
+  var h=c.hIdx, end=c.endIdx, topEnd=Math.min(end,h+700);
+  var gt=function(a,b){return a>b;}, lt=function(a,b){return a<b;};
+  var tHi=argBest(m.hi,h,topEnd,gt); if(tHi<0) tHi=argBest(m.close,h,topEnd,gt);
+  var tCl=argBest(m.close,h,topEnd,gt), mMax=argBest(m.mvrv,h,topEnd,gt);
+  var bLo=argBest(m.lo,tHi,end,lt); if(bLo<0) bLo=argBest(m.close,tHi,end,lt);
+  var bCl=argBest(m.close,tHi,end,lt), mMin=argBest(m.mvrv,tHi,end,lt);
+  var below=[]; for(var i=tHi;i<=end;i++) if(m.mvrv[i]<1) below.push(i);
+  // 把 MVRV<1 的日子按“间隔 ≤120 天”聚成区：第一个区 = 熊市底部区；其余（如 2020-03 新冠暴跌）单列
+  var zones=[]; below.forEach(function(i){ var z=zones[zones.length-1]; if(z && i-z.b<=120){ z.b=i; z.days++; } else zones.push({a:i,b:i,days:1}); });
+  return {tHi:tHi,tCl:tCl,mMax:mMax,bLo:bLo,bCl:bCl,mMin:mMin,below:below,zones:zones,
+          topHiPrice:(m.hi[tHi]!=null?m.hi[tHi]:m.close[tHi]), botLoPrice:(m.lo[bLo]!=null?m.lo[bLo]:m.close[bLo])};
+}
+function runsOf(flags){ // flags: array of booleans by day n -> [[a,b],...]
+  var out=[], s=-1; for(var n=0;n<flags.length;n++){ if(flags[n]&&s<0) s=n; if(!flags[n]&&s>=0){ out.push([s,n-1]); s=-1; } } if(s>=0) out.push([s,flags.length-1]); return out;
+}
+function mergeRuns(runs, maxGap, minLen){
+  var out=[]; runs.forEach(function(r){ if(out.length && r[0]-out[out.length-1][1]-1<=maxGap) out[out.length-1][1]=r[1]; else out.push([r[0],r[1]]); });
+  return out.filter(function(r){ return r[1]-r[0]+1>=minLen; });
+}
+function trioOf(persp){ var k = M.cycles.filter(function(c){return c.id===persp;})[0].k; return [M.cycles[k], M.cycles[k-1], M.cycles[k-2]]; }
+function spreadSeries(trio){ // relative spread of the three lines by cycle-day
+  var len = Math.min(trio[0].len, trio[1].len, trio[2].len), out=new Array(len);
+  for (var n=0;n<len;n++){ var a=M.mvrv[trio[0].hIdx+n], b=M.mvrv[trio[1].hIdx+n], c=M.mvrv[trio[2].hIdx+n]; out[n]=(Math.max(a,b,c)-Math.min(a,b,c))/((a+b+c)/3); }
+  return out;
+}
+function bandsOf(trio, thr){ var sp=spreadSeries(trio); return mergeRuns(runsOf(sp.map(function(v){return v<thr;})), 3, 5); }
+
+/* ---------- state ---------- */
+var pref = lsGet(LS_PREF) || {};
+var S = { persp:'2024', ylog:false, p2:'dd', band:true, thr:0.10, win:true, marks:true, theme: pref.theme||'auto', auto: pref.auto!==false, hidden:{} };
+
+/* ---------- 记住上次的样子：每次改动后、关闭页面前自动存进本机浏览器，下次打开原样恢复 ---------- */
+// OZ[视角] = 主图横轴缩放范围（用 D 存，数据更新后照样对得上）；OY = 主图纵轴缩放（Shift+滚轮）；scrollY0 = 当前标签页的滚动位置
+var TABSCROLL={}, OZ={}, OY=null, scrollY0=0, restoringScroll=false, viewTimer=null, userScrolled=false, TABS=['overlay','history','tables','guide','notes'];
+function okPair(a){ return !!a && a.length===2 && isFinite(a[0]) && isFinite(a[1]) && +a[0]<+a[1]; }
+function captureOverlayZoom(){
+  if(!chartO) return;
+  try{ var o=chartO.getOption(), dz=o.dataZoom||[], p=chartO.__sxPersp||S.persp, P=cycById(p);
+    if(P && dz[0] && dz[0].startValue!=null && dz[0].endValue!=null) OZ[p]=[Math.round((dz[0].startValue-P.hMs)/DAY), Math.round((dz[0].endValue-P.hMs)/DAY)];
+    if(dz[2]){ var a=dz[2].start, b=dz[2].end, zoomed=(a!=null&&a>0.05)||(b!=null&&b<99.95); OY=(zoomed&&dz[2].startValue!=null&&dz[2].endValue!=null)?[+dz[2].startValue,+dz[2].endValue]:null; }
+  }catch(err){}
+}
+function viewState(){ captureOverlayZoom();
+  return {v:1, tab:currentTab(), persp:S.persp, ylog:S.ylog, p2:S.p2, band:S.band, thr:S.thr, win:S.win, marks:S.marks, hidden:S.hidden, oz:OZ, oy:OY, hz:histZoom, y:Math.round(scrollY0), ts:TABSCROLL, saved:new Date().toISOString()}; }
+function saveView(){ clearTimeout(viewTimer); if(printing||!M) return; lsSet(LS_VIEW, viewState()); }
+function saveViewSoon(){ clearTimeout(viewTimer); viewTimer=setTimeout(saveView,300); }
+function syncControls(){
+  press('[data-persp]','data-persp',S.persp); press('[data-ylog]','data-ylog',S.ylog?'1':'0'); press('[data-p2]','data-p2',S.p2);
+  $('ck-band').checked=S.band; $('ck-win').checked=S.win; $('ck-marks').checked=S.marks;
+  $('rg-thr').value=String(Math.round(S.thr*100)); $('thr-val').textContent=Math.round(S.thr*100)+'%';
+}
+function setTabClasses(name){
+  Array.prototype.forEach.call(document.querySelectorAll('.tabs button'),function(x){ x.setAttribute('aria-selected', x.getAttribute('data-tab')===name?'true':'false'); });
+  var nav=document.querySelector('.tabs'), on=nav&&nav.querySelector('[aria-selected="true"]'); // 窄屏时让当前标签露在可见范围内
+  if(nav&&on){ var l=on.offsetLeft-nav.offsetLeft, r=l+on.offsetWidth; if(l<nav.scrollLeft) nav.scrollLeft=Math.max(0,l-12); else if(r>nav.scrollLeft+nav.clientWidth) nav.scrollLeft=r-nav.clientWidth+12; }
+  Array.prototype.forEach.call(document.querySelectorAll('.panel'),function(p){ p.classList.toggle('on', p.id==='tab-'+name); });
+}
+function applySavedView(V){
+  if(!V||V.v!==1) return;
+  if(V.persp==='2024'||V.persp==='2020') S.persp=V.persp;
+  S.ylog=V.ylog===true; if(['dd','price','off'].indexOf(V.p2)>=0) S.p2=V.p2;
+  S.band=V.band!==false; S.win=V.win!==false; S.marks=V.marks!==false;
+  if(typeof V.thr==='number' && V.thr>=0.04 && V.thr<=0.20) S.thr=Math.round(V.thr*100)/100;
+  S.hidden={}; if(V.hidden&&typeof V.hidden==='object') Object.keys(V.hidden).forEach(function(k){ if(V.hidden[k]&&cycById(k)) S.hidden[k]=true; });
+  OZ={}; if(V.oz&&typeof V.oz==='object') Object.keys(V.oz).forEach(function(k){ var z=V.oz[k]; if(cycById(k)&&okPair(z)) OZ[k]=[Math.max(0,Math.round(z[0])),Math.min(X_DAYS,Math.round(z[1]))]; });
+  OY=okPair(V.oy)?[+V.oy[0],+V.oy[1]]:null;
+  if(okPair(V.hz)) histZoom=[+V.hz[0],+V.hz[1]];
+  TABSCROLL={}; if(V.ts&&typeof V.ts==='object') TABS.forEach(function(k){ if(typeof V.ts[k]==='number'&&V.ts[k]>=0) TABSCROLL[k]=V.ts[k]; });
+  syncControls();
+  if(TABS.indexOf(V.tab)>=0) setTabClasses(V.tab);
+}
+function restoreScroll(V){
+  try{ if('scrollRestoration' in history) history.scrollRestoration='manual'; }catch(e){}
+  var y=(V&&typeof V.y==='number'&&V.y>0)?V.y:0; scrollY0=y; if(!y) return;
+  restoringScroll=true;
+  var go=function(){ if(!userScrolled) window.scrollTo(0,y); };
+  requestAnimationFrame(function(){ go(); setTimeout(function(){ go(); restoringScroll=false; scrollY0=window.scrollY||0; },400); });
+}
+function resetView(){
+  lsDel(LS_VIEW); OZ={}; OY=null; histZoom=null;
+  S.persp='2024'; S.ylog=false; S.p2='dd'; S.band=true; S.thr=0.10; S.win=true; S.marks=true; S.hidden={};
+  syncControls();
+  if(chartO){ chartO.dispose(); chartO=null; } if(chartH){ chartH.dispose(); chartH=null; }
+  selectTab('overlay'); renderTables();
+}
+function murphyPreset(){ // 和 Murphy 原图同一个样式：只留红绿蓝、关掉副图与标注、横轴从 2024-05（D11）起
+  var live=M.cycles[M.cycles.length-1], nowD=M.lastIdx-live.hIdx;
+  S.persp='2024'; S.ylog=false; S.p2='off'; S.band=false; S.win=false; S.marks=false; S.hidden={'2012':true};
+  OZ['2024']=[11, Math.min(X_DAYS, Math.max(801, nowD+90))]; OY=null;
+  syncControls(); if(chartO){ chartO.dispose(); chartO=null; }
+  selectTab('overlay'); renderTables(); toast('Switched to Murphy’s chart style (click “Reset view” to undo)');
+}
+/* ---------- 分享链接：把当前画面编进网址 #…，别人打开就是同样的样子 ---------- */
+function visibleSection(tab){
+  var root=tab==='guide'?$('g-body'):(tab==='tables'?$('tab-tables'):null); if(!root) return null;
+  var hs=root.querySelectorAll('h2[id],h3[id]'), best=null;
+  var lim=barH()+60; Array.prototype.forEach.call(hs,function(h){ if(h.getBoundingClientRect().top<=lim) best=h.id; });
+  return best;
+}
+function viewParams(withSection){
+  captureOverlayZoom();
+  var tab=currentTab(), p=['tab='+tab,'p='+S.persp], z=OZ[S.persp];
+  if(z && (z[0]>0 || z[1]<X_DAYS)) p.push('x='+z[0]+'-'+z[1]);
+  if(OY) p.push('y='+(+(+OY[0]).toFixed(3))+'_'+(+(+OY[1]).toFixed(3)));
+  if(S.ylog) p.push('log=1');
+  if(S.p2!=='dd') p.push('p2='+S.p2);
+  if(!S.band) p.push('band=0'); if(!S.win) p.push('win=0'); if(!S.marks) p.push('marks=0');
+  if(Math.round(S.thr*100)!==10) p.push('thr='+Math.round(S.thr*100));
+  var hid=Object.keys(S.hidden).filter(function(k){ return S.hidden[k]; }); if(hid.length) p.push('hide='+hid.join(','));
+  if(tab==='history' && okPair(histZoom)) p.push('hx='+fmtD(histZoom[0])+'~'+fmtD(histZoom[1]));
+  if(withSection){ var sec=visibleSection(tab); if(sec) p.push('sec='+sec); }
+  return p.join('&');
+}
+function shareUrl(){ return location.href.split('#')[0]+'#'+viewParams(true); }
+function parseHashView(){
+  var h=(location.hash||'').replace(/^#/,''); if(!h) return null;
+  if(h.indexOf('=')<0){ var el=document.getElementById(decodeURIComponent(h)); if(!el) return null; var pn=el.closest?el.closest('.panel'):null; return pn?{v:1,tab:pn.id.replace('tab-',''),sec:el.id,onlySec:true}:null; }
+  var q={}; h.split('&').forEach(function(kv){ var i=kv.indexOf('='); if(i>0){ try{ q[decodeURIComponent(kv.slice(0,i))]=decodeURIComponent(kv.slice(i+1)); }catch(e){} } });
+  if(!q.tab && !q.p) return null;
+  var V={v:1, tab:q.tab||'overlay', persp:q.p||'2024', ylog:q.log==='1', p2:q.p2||'dd', band:q.band!=='0', win:q.win!=='0', marks:q.marks!=='0', thr:q.thr?(+q.thr/100):0.10, hidden:{}, oz:{}, oy:null, hz:null, sec:q.sec||null};
+  if(q.hide) q.hide.split(',').forEach(function(k){ V.hidden[k]=true; });
+  if(q.x){ var m=q.x.split('-'); if(m.length===2) V.oz[V.persp]=[+m[0],+m[1]]; }
+  if(q.y){ var n=q.y.split('_'); if(n.length===2) V.oy=[+n[0],+n[1]]; }
+  if(q.hx){ var r=q.hx.split('~'); if(r.length===2 && /^\d{4}-\d\d-\d\d$/.test(r[0]) && /^\d{4}-\d\d-\d\d$/.test(r[1])) V.hz=[parseD(r[0]),parseD(r[1])]; }
+  return V;
+}
+function barH(){ var b=document.querySelector('.tabbar'); return b?b.getBoundingClientRect().height:0; }
+function scrollToSection(id){ var el=id?document.getElementById(id):null; if(!el) return false; window.scrollTo(0, Math.max(0, el.getBoundingClientRect().top+(window.scrollY||0)-barH()-8)); return true; }
+var toastTimer=null;
+function toast(msg){ var t=$('toast'); if(!t) return; t.textContent=msg; t.classList.add('on'); clearTimeout(toastTimer); toastTimer=setTimeout(function(){ t.classList.remove('on'); },2600); }
+function copyText(text){
+  function fallback(){ var ta=document.createElement('textarea'); ta.value=text; ta.setAttribute('readonly',''); ta.style.position='fixed'; ta.style.top='-1000px'; document.body.appendChild(ta); ta.select(); var ok=false; try{ ok=document.execCommand('copy'); }catch(e){} ta.remove(); return ok; }
+  if(navigator.clipboard && window.isSecureContext){ return navigator.clipboard.writeText(text).then(function(){ return true; },function(){ return fallback(); }); }
+  return Promise.resolve(fallback());
+}
+function isEmbedded(){ try{ return window.self!==window.top; }catch(e){ return true; } }
+function openShare(){
+  var url=shareUrl(), pop=$('share-pop'), inp=$('share-url'), local=location.protocol==='file:', emb=isEmbedded();
+  inp.value=url;
+  $('share-note').innerHTML=emb?'You are looking at a preview embedded in another page; links made here can’t be sent to other people. Open the published page and share from there.':local?'You opened this file directly on your computer, so this link only works on this computer (you can bookmark it). Once the page is published online, the link you get here can be sent to anyone.':'Anyone who opens this link sees what you see now: the same tab, view, switches and zoom; in the Guide or the key-dates tables it also jumps straight to the section you are reading.';
+  var canNative=!!navigator.share && !local && !emb && window.matchMedia && matchMedia('(pointer:coarse)').matches;
+  $('share-native').hidden=!canNative;
+  pop.hidden=false; setTimeout(function(){ try{ inp.focus(); inp.select(); }catch(e){} },30);
+}
+function closeShare(){ $('share-pop').hidden=true; }
+// 每个小标题旁的“#”：一键复制直达这一节的链接
+function addHeadingLinks(root,tab){
+  Array.prototype.forEach.call(root.querySelectorAll('h2[id],h3[id]'),function(h){ if(h.querySelector('.hlink')) return;
+    var b=document.createElement('button'); b.className='hlink noprint'; b.type='button'; b.textContent='#'; b.title='Copy a link to this section'; b.setAttribute('aria-label','Copy link to this section');
+    b.addEventListener('click',function(e){ e.preventDefault(); e.stopPropagation();
+      var base=location.href.split('#')[0], url=base+'#'+viewParams(false)+'&sec='+encodeURIComponent(h.id);
+      copyText(url).then(function(ok){ toast(ok?(location.protocol==='file:'?'Copied (links to a local file only work on this computer)':'Section link copied'):'Copy failed; use “Share” at the top instead'); }); });
+    h.appendChild(b); });
+}
+// 主题：S.theme = auto / light / dark。auto 时跟随宿主页面写在 <html data-theme> 上的选择（例如嵌在 claude.ai 里），没有就跟随系统
+var HOST_THEME=(function(v){ return (v==='dark'||v==='light')?v:null; })(document.documentElement.getAttribute('data-theme')), LAST_THEME_ATTR=null;
+function isDark(){ if(S.theme==='dark') return true; if(S.theme==='light') return false; if(HOST_THEME) return HOST_THEME==='dark'; return !!(window.matchMedia && matchMedia('(prefers-color-scheme: dark)').matches); }
+function applyTheme(){ var r=document.documentElement, want=(S.theme==='auto')?HOST_THEME:S.theme; LAST_THEME_ATTR=want||null; if(want) r.setAttribute('data-theme',want); else r.removeAttribute('data-theme'); $('btn-theme').textContent = isDark()?'Light':'Dark'; }
+function watchHostTheme(){ if(!window.MutationObserver) return; new MutationObserver(function(){ var v=document.documentElement.getAttribute('data-theme'); if(v===LAST_THEME_ATTR) return; // 是宿主改的
+    HOST_THEME=(v==='dark'||v==='light')?v:null; applyTheme(); if(S.theme==='auto' && M) renderAll(true); }).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']}); }
+function T(){ return { ink:cssVar('--ink'), ink2:cssVar('--ink2'), muted:cssVar('--muted'), grid:cssVar('--grid'), axis:cssVar('--axis'), surface:cssVar('--surface'),
+  red:cssVar('--red'), green:cssVar('--green'), blue:cssVar('--blue'), gray:cssVar('--gray'), band:cssVar('--band'), bandLine:cssVar('--band-line'), win:cssVar('--win'), under:cssVar('--under'), accent:cssVar('--accent') }; }
+
+/* 配色与 Murphy 原图一致：2024 视角（他 2025 年起的图）红=2024、绿=2020、蓝=2016；
+   2020 视角（他 2022–2023 年的图）红=2020、绿=2012、蓝=2016；其余为灰 */
+var ROLEMAP={ '2024':{'2024':'red','2020':'green','2016':'blue','2012':'gray'}, '2020':{'2020':'red','2012':'green','2016':'blue','2024':'gray'} };
+function roles(){
+  var t=T(), map=ROLEMAP[S.persp]||{}, out={};
+  M.cycles.forEach(function(c){
+    var role = map[c.id]||'gray';
+    var cn = {red:'Red',green:'Green',blue:'Blue',gray:'Gray'}[role];
+    out[c.id] = { role:role, color:t[role], width: role==='red'?2.6:(role==='gray'?1.2:1.8), opacity: role==='gray'?0.75:1,
+      name: TINY ? c.id : NARROW ? (cn+' '+c.id) : (cn+' · '+c.id+' cycle'+(c.id==='2024'?' (current)':'')), short: c.id+(c.id==='2024'?' (current)':'') };
+  });
+  return out;
+}
+
+/* ---------- overlay chart ---------- */
+var chartO=null, chartH=null, NARROW=false, TINY=false;
+function perspCycle(){ return M.cycles.filter(function(c){return c.id===S.persp;})[0]; }
+function nOfX(x){ return Math.round((x - perspCycle().hMs)/DAY); }
+function overlayOption(keepZoom){
+  var t=T(), R=roles(), P=perspCycle(), base=P.hMs, xMin=base, xMax=base+X_DAYS*DAY;
+  var el=$('chart-overlay'), H=el.clientHeight, W=el.clientWidth, narrow=W<720; NARROW=narrow; TINY=W<300; R=roles();
+  var showP2 = S.p2!=='off', showSp = true;
+  var topPad=narrow?44:40, axisBand=38, sliderH=22, gap=26, bottomPad=sliderH+14;
+  var avail = H-topPad-axisBand-bottomPad-(showP2?gap:0)-(showSp?gap:0);
+  var h0 = Math.round(avail*(showP2?(showSp?0.60:0.70):(showSp?0.82:1))), h1 = showP2?Math.round(avail*0.25):0, h2 = showSp?avail-h0-h1:0;
+  var left=narrow?44:58, right=narrow?14:74;
+  var grids=[{left:left,right:right,top:topPad,height:h0}], y=topPad+h0;
+  var gi={main:0,p2:-1,sp:-1};
+  if(showP2){ y+=gap; grids.push({left:left,right:right,top:y,height:h1}); gi.p2=grids.length-1; y+=h1; }
+  if(showSp){ y+=gap; grids.push({left:left,right:right,top:y,height:h2}); gi.sp=grids.length-1; y+=h2; }
+  var lastG=grids.length-1;
+
+  var xAxes=grids.map(function(g,i){ return { type:'time', gridIndex:i, min:xMin, max:xMax, splitNumber:narrow?4:undefined,
+    axisLine:{lineStyle:{color:t.axis}}, axisTick:{show:i===lastG, lineStyle:{color:t.axis}},
+    splitLine:{show:true,lineStyle:{color:t.grid}},
+    axisLabel:{ show:i===lastG, color:t.muted, fontSize:11, hideOverlap:true,
+      formatter:function(v){ var d=new Date(v), n=Math.round((v-base)/DAY); var lab=(d.getUTCDate()===1&&d.getUTCMonth()===0)? String(d.getUTCFullYear()) : (d.getUTCDate()===1? (d.getUTCFullYear()+'-'+('0'+(d.getUTCMonth()+1)).slice(-2)) : fmtD(v).slice(5)); return lab+'\n{d|D'+n+'}'; },
+      rich:{d:{color:t.muted,fontSize:10,lineHeight:14}} },
+    axisPointer:{ label:{ show:i===lastG, formatter:function(p){ return fmtD(p.value)+' · D'+Math.round((p.value-base)/DAY); } } } }; });
+
+  var yAxes=[{ type:S.ylog?'log':'value', logBase:2, gridIndex:0, scale:true, name:S.ylog?'MVRV (log)':'MVRV', nameTextStyle:{color:t.muted,fontSize:11,align:'left',padding:[0,0,0,-30]}, nameGap:8,
+      axisLabel:{color:t.muted,fontSize:11,formatter:function(v){ return String(+(+v).toFixed(3)); }}, splitLine:{lineStyle:{color:t.grid}}, axisLine:{show:false}, minorSplitLine:{show:false},
+      axisPointer:{label:{formatter:function(p){ var v=+p.value; return 'MVRV '+v.toFixed(2)+(S.persp==='2024'?'  ≈ '+usd(v*M.rpNow,0):''); }}} }];
+  if(showP2) yAxes.push({ type:S.p2==='price'?'log':'value', gridIndex:gi.p2, scale:true, name:S.p2==='price'?'BTC close (log)':'Drawdown from the highest close', nameTextStyle:{color:t.muted,fontSize:11,align:'left'}, nameGap:6,
+      max:S.p2==='dd'?0:null, axisLabel:{color:t.muted,fontSize:11,formatter:function(v){ return S.p2==='price'?usdK(v):Math.round(v*100)+'%'; }}, splitLine:{lineStyle:{color:t.grid}}, axisLine:{show:false},
+      axisPointer:{label:{formatter:function(p){ return S.p2==='price'?usd(+p.value,0):(+p.value*100).toFixed(1)+'%'; }}} });
+  if(showSp) yAxes.push({ type:'value', gridIndex:gi.sp, min:0, max:function(v){ return Math.min(1.2, Math.max(0.3, v.max)); }, name:'Spread of the three lines (R/G/B)', nameTextStyle:{color:t.muted,fontSize:11,align:'left'}, nameGap:6, splitNumber:2,
+      axisLabel:{color:t.muted,fontSize:11,formatter:function(v){return Math.round(v*100)+'%';}}, splitLine:{lineStyle:{color:t.grid}}, axisLine:{show:false},
+      axisPointer:{label:{formatter:function(p){ return (+p.value*100).toFixed(1)+'%'; }}} });
+
+  var series=[], legendData=[];
+  var order=M.cycles.slice().sort(function(a,b){ var w={gray:0,blue:1,green:2,red:3}; return w[R[a.id].role]-w[R[b.id].role]; });
+  order.forEach(function(c){
+    var r=R[c.id], d0=[], d1=[];
+    for(var n=0;n<c.len;n++){ var i=c.hIdx+n, x=base+n*DAY; d0.push([x,M.mvrv[i]]); if(showP2) d1.push([x, S.p2==='price'?M.close[i]:M.dd[i]]); }
+    var lineBase={ type:'line', name:r.name, showSymbol:false, symbol:'circle', symbolSize:6, animation:false, sampling:false, connectNulls:false,
+      lineStyle:{width:r.width,color:r.color,opacity:r.opacity,join:'round',cap:'round'}, itemStyle:{color:r.color}, emphasis:{disabled:true}, z:r.role==='red'?5:(r.role==='gray'?1:3) };
+    var s0=Object.assign({}, lineBase, { xAxisIndex:0, yAxisIndex:0, data:d0,
+      endLabel:{ show:!narrow, formatter:function(){return r.short;}, color:t.ink2, fontSize:11, distance:6, backgroundColor:t.surface, padding:[1,3], borderRadius:3 }, labelLayout:{moveOverlap:'shiftY'} });
+    series.push(s0); legendData.push({name:r.name, icon:'roundRect', itemStyle:{color:r.color}});
+    if(showP2) series.push(Object.assign({}, lineBase, { xAxisIndex:gi.p2, yAxisIndex:gi.p2, data:d1, lineStyle:{width:Math.max(1.2,r.width-0.6),color:r.color,opacity:r.opacity} }));
+  });
+
+  // intraday estimate point(s) for the live cycle (hollow marker)
+  var live=M.cycles[M.cycles.length-1];
+  if(EST.length){
+    var rl=R[live.id];
+    series.push({ type:'line', name:rl.name, xAxisIndex:0, yAxisIndex:0, animation:false, z:6, symbol:'circle', symbolSize:8, showSymbol:true,
+      lineStyle:{width:1.6,type:'dotted',color:rl.color}, itemStyle:{color:t.surface,borderColor:rl.color,borderWidth:2},
+      data:[[base+(M.lastIdx-live.hIdx)*DAY, M.mvrv[M.lastIdx]]].concat(EST.map(function(e){ return [base+(e.idx-live.hIdx)*DAY, e.mvrv]; })), emphasis:{disabled:true} });
+  }
+
+  // reference lines MVRV=1 / 3
+  series.push({ type:'line', name:'Reference lines', xAxisIndex:0, yAxisIndex:0, data:[], silent:true, animation:false,
+    markLine:{ silent:true, symbol:'none', animation:false, lineStyle:{color:t.muted,type:[6,4],width:1},
+      label:{position:'insideStartTop',color:t.ink2,fontSize:11,formatter:function(p){return p.name;}},
+      data:[{yAxis:1,name:'MVRV = 1 (price = network cost basis)'},{yAxis:3,name:'MVRV = 3',label:{position:'insideStartBottom'}}] } });
+
+  // Murphy time windows
+  if(S.win){
+    var w1a=addMonths(base,10), w1b=addMonths(base,12), w2a=addMonths(base,28), w2b=addMonths(base,33); // “第 k 个月” = 已过 (k−1)~k 个月
+    var mk=function(gidx,withLabel){ return { type:'line', name:'Murphy time windows', xAxisIndex:gidx, yAxisIndex:gidx, data:[], silent:true, animation:false,
+      markArea:{ silent:true, animation:false, itemStyle:{color:t.win}, label:{show:withLabel,position:'insideBottom',distance:6,color:t.ink2,fontSize:11,lineHeight:14},
+        data:[ [{xAxis:w1a,name:narrow?'':'Months 11–12\nhistory: above 3'},{xAxis:w1b}], [{xAxis:w2a,name:narrow?'':'Months 29–33\nhistory: all three <1'},{xAxis:w2b}] ] } }; };
+    series.push(mk(0,true)); if(showP2) series.push(mk(gi.p2,false)); if(showSp) series.push(mk(gi.sp,false));
+  }
+
+  // 三线合一 bands + spread panel
+  var trio=trioOf(S.persp), sp=spreadSeries(trio), bands=bandsOf(trio,S.thr);
+  if(S.band && bands.length){
+    var bd=bands.map(function(b){ return [{xAxis:base+b[0]*DAY-DAY/2},{xAxis:base+b[1]*DAY+DAY/2}]; });
+    var mkB=function(gidx){ return { type:'line', name:'Convergence periods', xAxisIndex:gidx, yAxisIndex:gidx, data:[], silent:true, animation:false, markArea:{silent:true,animation:false,itemStyle:{color:t.band},data:bd} }; };
+    series.push(mkB(0)); if(showP2) series.push(mkB(gi.p2)); if(showSp) series.push(mkB(gi.sp));
+  }
+  if(showSp){
+    series.push({ type:'line', name:'Spread', xAxisIndex:gi.sp, yAxisIndex:gi.sp, showSymbol:false, animation:false, z:3,
+      lineStyle:{width:1.6,color:t.bandLine}, itemStyle:{color:t.bandLine}, areaStyle:{color:t.bandLine,opacity:0.10}, emphasis:{disabled:true},
+      data:sp.map(function(v,n){return [base+n*DAY,v];}),
+      markLine:{silent:true,symbol:'none',animation:false,lineStyle:{color:t.bandLine,type:[6,4],width:1},label:{position:'insideEndTop',color:t.ink2,fontSize:11,formatter:'Threshold '+Math.round(S.thr*100)+'%'},data:[{yAxis:S.thr}]} });
+  }
+
+  // vertical markers: bottoms / tops of each cycle + latest
+  var vlines=[], pts=[];
+  if(S.marks){
+    M.cycles.forEach(function(c){
+      var r=R[c.id], ev=c.ev; if(S.hidden[c.id]) return;
+      var nb=ev.bLo-c.hIdx, nt=ev.tHi-c.hIdx, isLive=!c.complete;
+      vlines.push({ xAxis:base+nb*DAY, lineStyle:{color:r.color,width:1.2,type:[4,3],opacity:r.opacity}, label:{show:!narrow, formatter:(isLive?'Cycle low so far ':c.id+' bottom ')+M.date(ev.bLo)+' · D'+nb, color:t.ink2, position:'insideEndBottom'} });
+      pts.push({ c:c, kind:'bottom', n:nb, idx:ev.bLo }); pts.push({ c:c, kind:'top', n:nt, idx:ev.tHi });
+    });
+  }
+  if(S.persp===live.id) vlines.push({ xAxis:base+(M.lastIdx-live.hIdx)*DAY, lineStyle:{color:t.ink,width:1,type:'solid',opacity:.55}, label:{show:true, formatter:narrow?'Latest':('Latest '+M.lastDate+' · D'+(M.lastIdx-live.hIdx)), color:t.ink, position:'end', distance:3, fontWeight:600} });
+  grids.forEach(function(g,i){
+    series.push({ type:'line', name:'Markers', xAxisIndex:i, yAxisIndex:i, data:[], silent:true, animation:false,
+      markLine:{ silent:true, symbol:'none', animation:false, label:{fontSize:11, distance:[6,3]}, data:vlines.map(function(v){ var o={xAxis:v.xAxis,lineStyle:v.lineStyle,label:Object.assign({},v.label)}; if(i!==0) o.label.show=false; return o; }) } });
+  });
+  if(S.marks){
+    series.push({ type:'scatter', name:'Markers', xAxisIndex:0, yAxisIndex:0, animation:false, z:8, symbolSize:11,
+      data:pts.map(function(p){ var r=R[p.c.id]; return { value:[base+p.n*DAY, M.mvrv[p.idx]], symbol:p.kind==='top'?'triangle':'path://M0,0 L10,0 L5,9 Z', itemStyle:{color:r.color,borderColor:t.surface,borderWidth:2,opacity:r.opacity}, meta:p }; }),
+      tooltip:{show:false}, emphasis:{disabled:true} });
+  }
+
+  var opt={ useUTC:true, animation:false, backgroundColor:'transparent', textStyle:{fontFamily:'system-ui,-apple-system,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif'},
+    grid:grids, xAxis:xAxes, yAxis:yAxes, series:series,
+    legend:{ top:4, left:narrow?4:left-6, right:right, type:'scroll', data:legendData, selected:legendSelected(R), textStyle:{color:t.ink2,fontSize:12}, itemWidth:narrow?14:18, itemHeight:4, itemGap:narrow?10:16, inactiveColor:t.axis, pageIconColor:t.ink2, pageTextStyle:{color:t.ink2} },
+    axisPointer:{ link:[{xAxisIndex:'all'}], lineStyle:{color:t.muted,width:1}, crossStyle:{color:t.muted,width:1}, label:{backgroundColor:isDark()?'#383835':'#0b0b0b',color:'#fff',fontSize:11,padding:[4,6]} },
+    tooltip:{ trigger:'axis', confine:true, triggerOn:'mousemove|click', transitionDuration:0, axisPointer:{type:'cross',snap:false},
+      backgroundColor:isDark()?'#262624':'#ffffff', borderColor:isDark()?'#383835':'#e1e0d9', borderWidth:1, padding:[8,10], extraCssText:'box-shadow:0 6px 24px rgba(0,0,0,.18);border-radius:10px;max-width:96vw;',
+      formatter:function(params){ if(!params||!params.length) return ''; return tipOverlay(params[0].axisValue); } },
+    dataZoom:[
+      { type:'inside', xAxisIndex:grids.map(function(_,i){return i;}), filterMode:'filter', zoomOnMouseWheel:true, moveOnMouseMove:true, moveOnMouseWheel:false, minValueSpan:20*DAY },
+      { type:'slider', xAxisIndex:grids.map(function(_,i){return i;}), filterMode:'filter', height:sliderH, bottom:8, left:left, right:right, showDetail:false, brushSelect:false,
+        borderColor:t.grid, backgroundColor:'transparent', fillerColor:isDark()?'rgba(255,255,255,.08)':'rgba(11,11,11,.06)', dataBackground:{lineStyle:{color:t.axis},areaStyle:{color:t.grid}}, selectedDataBackground:{lineStyle:{color:t.muted},areaStyle:{color:t.axis}}, handleStyle:{color:t.surface,borderColor:t.muted}, moveHandleStyle:{color:t.axis}, minValueSpan:20*DAY },
+      { type:'inside', yAxisIndex:[0], filterMode:'none', zoomOnMouseWheel:'shift', moveOnMouseMove:'shift', moveOnMouseWheel:false }
+    ] };
+  var zx=null;
+  if(keepZoom && chartO && chartO.__sxPersp===S.persp){ var cur=chartO.getOption().dataZoom; if(cur&&cur[0]&&cur[0].startValue!=null) zx=[cur[0].startValue,cur[0].endValue]; }
+  if(!zx && OZ[S.persp]) zx=[base+OZ[S.persp][0]*DAY, base+OZ[S.persp][1]*DAY];
+  if(zx){ opt.dataZoom[0].startValue=opt.dataZoom[1].startValue=Math.max(xMin,Math.min(xMax,zx[0])); opt.dataZoom[0].endValue=opt.dataZoom[1].endValue=Math.max(xMin,Math.min(xMax,zx[1])); }
+  if(OY){ opt.dataZoom[2].startValue=OY[0]; opt.dataZoom[2].endValue=OY[1]; }
+  return opt;
+}
+function legendSelected(R){ var sel={}; Object.keys(R).forEach(function(id){ sel[R[id].name]=!S.hidden[id]; }); return sel; }
+
+function tipOverlay(x){
+  var P=perspCycle(), n=Math.round((x-P.hMs)/DAY), R=roles(), rows='', trio=trioOf(S.persp), live=M.cycles[M.cycles.length-1];
+  var order=M.cycles.slice().sort(function(a,b){ var w={red:0,green:1,blue:2,gray:3}; return w[R[a.id].role]-w[R[b.id].role]; });
+  order.forEach(function(c){
+    var r=R[c.id]; if(S.hidden[c.id]) return;
+    var key='<span style="display:inline-block;width:14px;border-top:3px solid '+r.color+';border-radius:2px;vertical-align:middle;margin-right:6px"></span>';
+    if(n<0||n>=c.len){
+      var e=null; if(c===live) EST.forEach(function(q){ if(q.idx-c.hIdx===n) e=q; });
+      if(e) rows+='<tr><td>'+key+esc(r.short)+'</td><td>'+e.date+'</td><td class="v est">≈'+num(e.mvrv,3)+'</td><td class="v est">≈'+usd(e.close,0)+'</td><td class="est">Intraday estimate · not closed</td></tr>';
+      else rows+='<tr><td>'+key+esc(r.short)+'</td><td colspan="4" class="est">'+(c===live&&n>=c.len?'(not reached yet)':'(no data for this cycle here)')+'</td></tr>';
+      return;
+    }
+    var i=c.hIdx+n, mv=M.mvrv[i], extra='';
+    if(S.persp==='2024' && c.id!=='2024') extra='≈'+usd(mv*M.rpNow,0);
+    rows+='<tr><td>'+key+esc(r.short)+'</td><td>'+M.date(i)+'</td><td class="v">'+num(mv,3)+'</td><td class="v">'+usd(M.close[i])+'</td><td>'+pct(M.dd[i],1)+'</td><td>'+extra+'</td></tr>';
+  });
+  var spTxt=''; var len=Math.min(trio[0].len,trio[1].len,trio[2].len);
+  if(n>=0&&n<len){ var a=M.mvrv[trio[0].hIdx+n],b=M.mvrv[trio[1].hIdx+n],c3=M.mvrv[trio[2].hIdx+n]; var sp=(Math.max(a,b,c3)-Math.min(a,b,c3))/((a+b+c3)/3); spTxt='Spread of red/green/blue <b>'+pct(sp,1)+'</b>'+(sp<S.thr?' (below threshold: “converged”)':''); }
+  return '<div class="tt" style="--tt-ink:'+(isDark()?'#fff':'#0b0b0b')+';--tt-ink2:'+(isDark()?'#c3c2b7':'#52514e')+'">'
+    +'<div class="hd">Day '+n+' after halving <span>('+(n/30.4375).toFixed(1)+' months) · '+S.persp+' cycle calendar: '+fmtD(x)+'</span></div>'
+    +'<table><tr><th>Line</th><th>Actual date</th><th>MVRV</th><th>Close</th><th>From high</th><th>'+(S.persp==='2024'?'At today’s RP':'')+'</th></tr>'+rows+'</table>'
+    +'<div class="ft">'+spTxt+'</div></div>';
+}
+
+function fitChart(el){ var top=el.getBoundingClientRect().top + (window.scrollY||0); var h=Math.max(window.innerWidth<720?500:580, Math.min(1100, window.innerHeight - top - 46)); if(Math.abs((parseFloat(el.style.height)||0)-h)>2){ el.style.height=h+'px'; return true; } return false; }
+function renderOverlay(keepZoom){
+  if(chartO) captureOverlayZoom();
+  if(fitChart($('chart-overlay')) && chartO) chartO.resize();
+  if(!chartO){ chartO=echarts.init($('chart-overlay'),null,{renderer:'canvas'});
+    ['legendselectchanged','legendselected','legendunselected','legendselectall','legendinverseselect'].forEach(function(ev){ chartO.on(ev,function(e){ if(!e||!e.selected) return; var R=roles(); S.hidden={}; Object.keys(R).forEach(function(id){ if(e.selected[R[id].name]===false) S.hidden[id]=true; }); renderOverlay(true); }); });
+    chartO.on('datazoom',function(){ captureOverlayZoom(); saveViewSoon(); });
+  }
+  chartO.setOption(overlayOption(keepZoom), true); chartO.__sxPersp=S.persp;
+  saveViewSoon();
+}
+function zoomOverlay(a,b){ var P=perspCycle(); var s=P.hMs+Math.max(0,a)*DAY, e=P.hMs+Math.min(X_DAYS,b)*DAY; [0,1].forEach(function(i){ chartO.dispatchAction({type:'dataZoom',dataZoomIndex:i,startValue:s,endValue:e}); }); }
+
+/* ---------- history chart ---------- */
+function historyOption(){
+  var t=T(), el=$('chart-history'), H=el.clientHeight, W=el.clientWidth, narrow=W<720;
+  var left=narrow?50:66, right=narrow?14:30, topPad=34, gap=30, axisBand=30, sliderH=22, bottomPad=sliderH+14;
+  var avail=H-topPad-gap-axisBand-bottomPad, h0=Math.round(avail*0.62), h1=avail-h0;
+  var grids=[{left:left,right:right,top:topPad,height:h0},{left:left,right:right,top:topPad+h0+gap,height:h1}];
+  var px=[],rp=[],mv=[]; for(var i=0;i<M.n;i++){ var x=M.startMs+i*DAY; px.push([x,M.close[i]]); rp.push([x,M.close[i]/M.mvrv[i]]); mv.push([x,M.mvrv[i]]); }
+  var hl=M.cycles.map(function(c,k){ return {xAxis:c.hMs,name:'Halving #'+(k+1)+' '+c.hDate}; });
+  var below=mergeRuns(runsOf(M.mvrv.map(function(v){return v<1;})),0,1).map(function(r){ return [{xAxis:M.startMs+r[0]*DAY-DAY/2},{xAxis:M.startMs+r[1]*DAY+DAY/2}]; });
+  var pts=[]; M.cycles.forEach(function(c){ var ev=c.ev; pts.push({value:[M.startMs+ev.tHi*DAY, ev.topHiPrice], symbol:'triangle', lab:(c.complete||true?'Top ':'')+M.date(ev.tHi)+'\n'+usd(ev.topHiPrice,0), pos:'top'});
+    pts.push({value:[M.startMs+ev.bLo*DAY, ev.botLoPrice], symbol:'path://M0,0 L10,0 L5,9 Z', lab:(c.complete?'Bottom ':'Cycle low so far ')+M.date(ev.bLo)+'\n'+usd(ev.botLoPrice,0), pos:'bottom'}); });
+  var xA=function(i){ return { type:'time', gridIndex:i, min:M.startMs, max:M.startMs+(M.n+HIST_PAD)*DAY, axisLine:{lineStyle:{color:t.axis}}, axisTick:{show:i===1,lineStyle:{color:t.axis}}, splitLine:{show:true,lineStyle:{color:t.grid}}, axisLabel:{show:i===1,color:t.muted,fontSize:11,hideOverlap:true}, axisPointer:{label:{show:i===1,formatter:function(p){return fmtD(p.value);}}} }; };
+  return { useUTC:true, animation:false, backgroundColor:'transparent', textStyle:{fontFamily:'system-ui,-apple-system,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif'},
+    grid:grids, xAxis:[xA(0),xA(1)],
+    yAxis:[ {type:'log',gridIndex:0,scale:true,name:narrow?'':'BTC / USD (log)',nameTextStyle:{color:t.muted,fontSize:11,align:'left'},nameGap:8,axisLabel:{color:t.muted,fontSize:11,formatter:function(v){return usdK(v);}},splitLine:{lineStyle:{color:t.grid}},axisLine:{show:false},axisPointer:{label:{formatter:function(p){return usd(+p.value);}}}},
+            {type:'log',logBase:2,gridIndex:1,scale:true,name:'MVRV (log)',nameTextStyle:{color:t.muted,fontSize:11,align:'left'},nameGap:8,axisLabel:{color:t.muted,fontSize:11,formatter:function(v){ return String(+(+v).toFixed(3)); }},splitLine:{lineStyle:{color:t.grid}},axisLine:{show:false},axisPointer:{label:{formatter:function(p){return 'MVRV '+(+p.value).toFixed(2);}}}} ],
+    legend:{ top:2, right:right, data:[{name:'BTC close',icon:'roundRect',itemStyle:{color:t.ink}},{name:'Realized price RP',icon:'roundRect',itemStyle:{color:t.bandLine}},{name:'MVRV',icon:'roundRect',itemStyle:{color:t.blue}}], textStyle:{color:t.ink2,fontSize:12}, itemWidth:18, itemHeight:4, itemGap:16, inactiveColor:t.axis, selectedMode:false },
+    axisPointer:{ link:[{xAxisIndex:'all'}], lineStyle:{color:t.muted,width:1}, crossStyle:{color:t.muted,width:1}, label:{backgroundColor:isDark()?'#383835':'#0b0b0b',color:'#fff',fontSize:11,padding:[4,6]} },
+    tooltip:{ trigger:'axis', confine:true, transitionDuration:0, axisPointer:{type:'cross',snap:false}, backgroundColor:isDark()?'#262624':'#ffffff', borderColor:isDark()?'#383835':'#e1e0d9', borderWidth:1, padding:[8,10], extraCssText:'box-shadow:0 6px 24px rgba(0,0,0,.18);border-radius:10px;',
+      formatter:function(params){ if(!params||!params.length) return ''; return tipHistory(params[0].axisValue); } },
+    dataZoom:[ {type:'inside',xAxisIndex:[0,1],filterMode:'filter',minValueSpan:30*DAY},
+      {type:'slider',xAxisIndex:[0,1],filterMode:'filter',height:sliderH,bottom:8,left:left,right:right,showDetail:false,brushSelect:false,borderColor:t.grid,backgroundColor:'transparent',fillerColor:isDark()?'rgba(255,255,255,.08)':'rgba(11,11,11,.06)',dataBackground:{lineStyle:{color:t.axis},areaStyle:{color:t.grid}},selectedDataBackground:{lineStyle:{color:t.muted},areaStyle:{color:t.axis}},handleStyle:{color:t.surface,borderColor:t.muted},moveHandleStyle:{color:t.axis},minValueSpan:30*DAY},
+      {type:'inside',yAxisIndex:[0],filterMode:'none',zoomOnMouseWheel:'shift',moveOnMouseMove:'shift'} ],
+    series:[
+      {type:'line',name:'BTC close',xAxisIndex:0,yAxisIndex:0,data:px,showSymbol:false,animation:false,lineStyle:{width:1.8,color:t.ink},itemStyle:{color:t.ink},emphasis:{disabled:true},z:4,
+        markLine:{silent:true,symbol:'none',animation:false,lineStyle:{color:t.muted,type:[5,4],width:1},label:{position:'insideEndTop',color:t.ink2,fontSize:11,formatter:function(p){return p.name;}},data:hl},
+        markArea:{silent:true,animation:false,itemStyle:{color:t.under},data:below}},
+      {type:'line',name:'Realized price RP',xAxisIndex:0,yAxisIndex:0,data:rp,showSymbol:false,animation:false,lineStyle:{width:1.5,color:t.bandLine},itemStyle:{color:t.bandLine},emphasis:{disabled:true},z:3},
+      {type:'scatter',name:'Tops/bottoms',xAxisIndex:0,yAxisIndex:0,animation:false,z:8,symbolSize:11,tooltip:{show:false},emphasis:{disabled:true},
+        data:pts.map(function(p){ return {value:p.value,symbol:p.symbol,itemStyle:{color:t.ink,borderColor:t.surface,borderWidth:2},label:{show:!narrow,position:p.pos,formatter:p.lab,color:t.ink2,fontSize:10.5,lineHeight:13,distance:6}}; }), labelLayout:{hideOverlap:true}},
+      {type:'line',name:'MVRV',xAxisIndex:1,yAxisIndex:1,data:mv,showSymbol:false,animation:false,lineStyle:{width:1.6,color:t.blue},itemStyle:{color:t.blue},emphasis:{disabled:true},z:4,
+        markLine:{silent:true,symbol:'none',animation:false,lineStyle:{color:t.muted,type:[5,4],width:1},label:{position:'insideStartTop',color:t.ink2,fontSize:11,formatter:function(p){return p.name||'';}},data:[{yAxis:1,name:'MVRV = 1'},{yAxis:3,name:'MVRV = 3'}].concat(hl.map(function(h){return {xAxis:h.xAxis,name:''};}))},
+        markArea:{silent:true,animation:false,itemStyle:{color:t.under},data:below}}
+    ] };
+}
+function tipHistory(x){
+  var i=Math.round((x-M.startMs)/DAY); if(i<0||i>=M.n) return '';
+  var c=null; M.cycles.forEach(function(q){ if(i>=q.hIdx) c=q; });
+  var cyc=c?(c.id+' cycle · day '+(i-c.hIdx)+' after halving'):'before the first halving';
+  var hl=(M.hi[i]!=null)?('<tr><td>Intraday high / low (Bitstamp)</td><td class="v">'+usd(M.hi[i])+' / '+usd(M.lo[i])+'</td></tr>'):'';
+  return '<div class="tt" style="--tt-ink:'+(isDark()?'#fff':'#0b0b0b')+';--tt-ink2:'+(isDark()?'#c3c2b7':'#52514e')+'"><div class="hd">'+M.date(i)+' <span>(UTC) · '+cyc+'</span></div><table>'
+    +'<tr><td>BTC close</td><td class="v">'+usd(M.close[i])+'</td></tr>'+hl
+    +'<tr><td>Realized price RP</td><td class="v">'+usd(M.close[i]/M.mvrv[i])+'</td></tr>'
+    +'<tr><td>MVRV</td><td class="v">'+num(M.mvrv[i],3)+'</td></tr>'
+    +'<tr><td>From the highest close</td><td class="v">'+pct(M.dd[i],1)+'</td></tr></table></div>';
+}
+var histZoom=null;
+function renderHistory(){ if(fitChart($('chart-history')) && chartH) chartH.resize();
+  if(!chartH){ chartH=echarts.init($('chart-history'),null,{renderer:'canvas'}); chartH.on('datazoom',function(){ var dz=chartH.getOption().dataZoom[0]; histZoom=[dz.startValue,dz.endValue]; saveViewSoon(); }); }
+  var opt=historyOption(), z=histZoom||[parseD('2012-01-01'), M.startMs+(M.n+HIST_PAD)*DAY];
+  opt.dataZoom[0].startValue=opt.dataZoom[1].startValue=z[0]; opt.dataZoom[0].endValue=opt.dataZoom[1].endValue=z[1];
+  chartH.setOption(opt,true); }
+function zoomHistory(a,b){ [0,1].forEach(function(i){ chartH.dispatchAction({type:'dataZoom',dataZoomIndex:i,startValue:a,endValue:b}); }); }
+
+/* ---------- analysis helpers（关键日期表 + 讲解页共用） ---------- */
+var IDROLE={'2024':'red','2020':'green','2016':'blue','2012':'gray'}; // 讲解页与表五、表六统一用“本轮视角”的周期配色
+function idColor(id){ return T()[IDROLE[id]||'gray']; }
+function idKey(id){ return '<span class="key '+(IDROLE[id]||'gray')+'"></span>'; }
+function sgnPct(v,dp){ if(v==null||isNaN(v)) return '—'; return (v>0?'+':'')+(v*100).toFixed(dp==null?0:dp)+'%'; }
+function rpAt(i){ return M.close[i]/M.mvrv[i]; }
+function nextHalvingMs(){ var m=RAW.meta; if(m.next_halving_eta) return parseD(m.next_halving_eta); if(m.tip_height) return parseD(m.tip_utc.slice(0,10))+(m.next_halving_block-m.tip_height)*600000; return M.cycles[M.cycles.length-1].hMs+1456*DAY; }
+function cycLen(c){ return c.complete ? (M.cycles[c.k+1].hIdx-c.hIdx) : Math.round((nextHalvingMs()-c.hMs)/DAY); }
+function fmtDiff(ms){ var diff=Math.round((ms-(M.startMs+M.lastIdx*DAY))/DAY); return diff===0?'today':(diff>0?('in '+diff+(diff===1?' day':' days')):((-diff)+(diff===-1?' day ago':' days ago'))); }
+// 成本重置：熊市里 RP 从峰值（牛顶前 120 天 ~ 熊底）回落到谷值（峰值 ~ 熊底后 150 天）
+function rpReset(c){ var e=c.ev, a=Math.max(0,e.tHi-120), b=Math.min(M.lastIdx,e.bLo), pk=a, i;
+  for(i=a;i<=b;i++) if(rpAt(i)>rpAt(pk)) pk=i;
+  var b2=Math.min(M.lastIdx,e.bLo+150), tr=pk; for(i=pk;i<=b2;i++) if(rpAt(i)<rpAt(tr)) tr=i;
+  return {pk:pk,tr:tr,chg:rpAt(tr)/rpAt(pk)-1}; }
+// “第 m0+1 ~ m1 个月”（已过 m0~m1 个月）里满足条件的天数
+function monthCount(c,m0,m1,pred){ var a=c.hIdx+Math.round(m0*30.4375), b=c.hIdx+Math.round(m1*30.4375), e=Math.min(b,M.lastIdx), n=0, k=0, lo=1e9, hi=-1e9;
+  for(var i=a;i<=e;i++){ n++; var v=M.mvrv[i]; if(pred(v)) k++; lo=Math.min(lo,v); hi=Math.max(hi,v); }
+  return {k:k,n:n,total:b-a+1,min:n?lo:null,max:n?hi:null}; }
+// 三线合一区间 + 之后走势（回测）
+function backtestBands(persp,thr){
+  var trio=trioOf(persp), P=trio[0], sp=spreadSeries(trio);
+  return bandsOf(trio,thr).map(function(r){
+    var a=r[0], b=r[1], i=P.hIdx+b, lo=1e18, hi=0, ml=1e9, mh=0, ms=1, n, j;
+    for(n=a;n<=b;n++){ var k=P.hIdx+n; lo=Math.min(lo,M.close[k]); hi=Math.max(hi,M.close[k]); ml=Math.min(ml,M.mvrv[k]); mh=Math.max(mh,M.mvrv[k]); ms=Math.min(ms,sp[n]); }
+    var f=function(h){ return i+h<=M.lastIdx ? M.close[i+h]/M.close[i]-1 : null; };
+    var dd=null; if(i+180<=M.lastIdx){ var m=1e18; for(j=i+1;j<=i+180;j++){ var v=(M.lo[j]!=null?M.lo[j]:M.close[j]); if(v<m) m=v; } dd=m/M.close[i]-1; }
+    var hc=[trio[1],trio[2]].map(function(c){ var x=c.hIdx+b, y=x+180; return {id:c.id, chg:(y<=M.lastIdx)?M.mvrv[y]/M.mvrv[x]-1:null}; });
+    var havg=(hc[0].chg!=null&&hc[1].chg!=null)?(hc[0].chg+hc[1].chg)/2:null;
+    return {persp:persp,a:a,b:b,days:b-a+1,d0:M.date(P.hIdx+a),d1:M.date(P.hIdx+b),lo:lo,hi:hi,ml:ml,mh:mh,ms:ms,entry:M.close[i],f90:f(90),f180:f(180),dd180:dd,hist:hc,havg:havg};
+  });
+}
+// 本轮熊底时间类比：四种算法 × 三个完整周期
+function analogRows(){
+  var live=M.cycles[M.cycles.length-1], top=live.ev.tHi, nh=nextHalvingMs(), L=cycLen(live);
+  return M.cycles.filter(function(c){return c.complete;}).map(function(c){
+    var e=c.ev, bD=e.bLo-c.hIdx, t2b=e.bLo-e.tHi, b2n=M.cycles[c.k+1].hIdx-e.bLo, frac=bD/cycLen(c);
+    return {c:c,bD:bD,t2b:t2b,b2n:b2n,frac:frac,byD:live.hMs+bD*DAY,byT2B:M.startMs+(top+t2b)*DAY,byB2N:nh-b2n*DAY,byFrac:live.hMs+Math.round(frac*L)*DAY};
+  });
+}
+function analogSpan(){ var last=M.startMs+M.lastIdx*DAY, fut=[]; analogRows().forEach(function(r){ [r.byD,r.byT2B,r.byB2N,r.byFrac].forEach(function(ms){ if(ms>last) fut.push(ms); }); }); fut.sort(function(a,b){return a-b;}); return {n:fut.length,a:fut[0],b:fut[fut.length-1],all:fut}; }
+// Murphy 式折算：未来若干周 + 历史熊底那几天
+function murphyRows(weeks){
+  var live=M.cycles[M.cycles.length-1], n0=M.lastIdx-live.hIdx, g=M.cycles[2], bl=M.cycles[1], ns=[], w;
+  for(w=0;w<=weeks;w++) ns.push(n0+w*7);
+  [bl.ev.bLo-bl.hIdx, g.ev.mMin-g.hIdx, g.ev.bLo-g.hIdx].forEach(function(x){ if(x>n0 && x<n0+weeks*7 && ns.indexOf(x)<0) ns.push(x); });
+  ns.sort(function(a,b){return a-b;});
+  return ns.map(function(n){ return {n:n,cal:live.hMs+n*DAY,gi:g.hIdx+n,bi:bl.hIdx+n}; });
+}
+/* ---------- 表七 / 表八：今天的位置、“最后一根稻草”、熊底后的修复（2026-10-07 加入） ---------- */
+// 有名的暴跌事件：这里只写日期和名字，所有数字都由数据实时计算。kind：last = 压垮骆驼的最后一根稻草；mid = 熊市中途；ext = 外生冲击；live = 本轮
+var SWANS=[
+  {cy:'2012',d:'2014-02-07',name:'Mt.Gox halts withdrawals',short:'Mt.Gox',kind:'mid'},
+  {cy:'2012',d:'2015-01-05',name:'Bitstamp hack, exchange offline',short:'Bitstamp',kind:'last'},
+  {cy:'2016',d:'2018-11-15',name:'BCH fork hash war',short:'BCH',kind:'last'},
+  {cy:'2016',d:'2020-03-12',name:'COVID crash',short:'COVID',kind:'ext'},
+  {cy:'2020',d:'2022-05-09',name:'LUNA / UST collapse',short:'LUNA',kind:'mid'},
+  {cy:'2020',d:'2022-06-13',name:'Celsius freezes withdrawals, 3AC blows up',short:'Celsius',kind:'mid'},
+  {cy:'2020',d:'2022-11-08',name:'FTX collapse',short:'FTX',kind:'last'},
+  {cy:'2024',d:'2025-10-10',name:'Oct 10: largest liquidation ever (tariffs)',short:'Oct 10',kind:'live'},
+  {cy:'2024',d:'2026-02-05',name:'Feb 5: deleveraging crash',short:'Feb 5',kind:'live'},
+  {cy:'2024',d:'2026-06-30',name:'Jun 30: Strategy’s first BTC sale, quarter-end selling',short:'Jun 30',kind:'live'}
+];
+var SWAN_KIND={last:'Last straw',mid:'Mid-bear',ext:'External shock',live:'This cycle'};
+function cycById(id){ return M.cycles.filter(function(c){return c.id===id;})[0]; }
+function nhIdxOf(c){ return c.complete ? M.cycles[c.k+1].hIdx : Math.round((nextHalvingMs()-M.startMs)/DAY); }
+function loAt(i){ return M.lo[i]!=null ? M.lo[i] : M.close[i]; }
+function maxClose(a,b){ var m=0; for(var i=Math.max(0,a);i<=Math.min(b,M.lastIdx);i++) if(M.close[i]>m) m=M.close[i]; return m; }
+function relBot(rel,live){ var w=live?'the low so far':'the bottom'; return rel===0?('on the day of '+w):(rel>0?(rel+(rel===1?' day':' days')+' before '+w):((-rel)+(rel===-1?' day':' days')+' after '+w)); }
+// 当轮第 i 天按四把钟搬到本轮日历（毫秒）
+function clocksFor(c,i){ var live=M.cycles[M.cycles.length-1], D=i-c.hIdx;
+  return {byD:live.hMs+D*DAY, byTop:M.startMs+(live.ev.tHi+(i-c.ev.tHi))*DAY, byNext:nextHalvingMs()-(nhIdxOf(c)-i)*DAY, byFrac:live.hMs+Math.round(D/cycLen(c)*cycLen(live))*DAY}; }
+// 反过来：本轮“今天”按四把钟对应到前三轮的哪一天
+function todayAnalogs(){
+  var live=M.cycles[M.cycles.length-1], L=cycLen(live), now=M.lastIdx, nD=now-live.hIdx, nT=now-live.ev.tHi, nN=nhIdxOf(live)-now;
+  return {nD:nD,nT:nT,nN:nN,frac:nD/L,rows:M.cycles.filter(function(c){return c.complete;}).map(function(c){
+    var idx={byD:c.hIdx+nD, byTop:c.ev.tHi+nT, byNext:nhIdxOf(c)-nN, byFrac:c.hIdx+Math.round(nD/L*cycLen(c))}, out={c:c};
+    Object.keys(idx).forEach(function(k){ var i=idx[k]; out[k]={i:i,date:M.date(i),rel:c.ev.bLo-i,mvrv:M.mvrv[i],dd:M.dd[i],
+      f30:(i+30<=M.lastIdx?M.close[i+30]/M.close[i]-1:null), f90:(i+90<=M.lastIdx?M.close[i+90]/M.close[i]-1:null)}; });
+    return out; })};
+}
+function swanRows(){
+  return SWANS.map(function(s){
+    var c=cycById(s.cy), i=M.idxOf(s.d); if(!c||i<1||i>M.lastIdx) return null;
+    var e=c.ev, m7=1e18, j; for(j=i;j<=Math.min(i+7,M.lastIdx);j++) m7=Math.min(m7,loAt(j));
+    return {s:s,c:c,i:i,date:s.d,D:i-c.hIdx,aTop:i-e.tHi,toBot:e.bLo-i,d1:M.close[i]/M.close[i-1]-1,m7:m7,dd7:m7/M.close[i-1]-1,
+      toBotChg:(e.bLo>=i?e.botLoPrice/M.close[i-1]-1:null),mvPrev:M.mvrv[i-1],ddPrev:M.dd[i-1]};
+  }).filter(Boolean);
+}
+function triggerRows(){ return swanRows().filter(function(r){return r.s.kind==='last';}).map(function(r){ var k=clocksFor(r.c,r.i); return {r:r,byD:k.byD,byTop:k.byTop,byNext:k.byNext,byFrac:k.byFrac,toBot:r.c.ev.bLo-r.i}; }); }
+function triggerSpan(){ var last=M.startMs+M.lastIdx*DAY, fut=[]; triggerRows().forEach(function(r){ [r.byD,r.byTop,r.byNext,r.byFrac].forEach(function(ms){ if(ms>last) fut.push(ms); }); }); fut.sort(function(a,b){return a-b;}); return {n:fut.length,a:fut[0],b:fut[fut.length-1],all:fut}; }
+// 熊市里 7 天跌幅 ≤ thr 的独立事件（相隔 >21 天才算两次；取每次最深的那天）
+function crashEpisodes(c,thr){ var e=c.ev, a=e.tHi+7, b=c.complete?Math.min(e.bLo+30,M.lastIdx):M.lastIdx, cand=[], i, k;
+  for(i=a;i<=b;i++) cand.push([M.close[i]/M.close[i-7]-1,i]);
+  cand.sort(function(x,y){return x[0]-y[0];});
+  var ep=[]; for(k=0;k<cand.length;k++){ var r=cand[k]; if(r[0]>thr) break; if(ep.every(function(p){return Math.abs(p[1]-r[1])>21;})) ep.push(r); }
+  ep.sort(function(x,y){return x[1]-y[1];}); return ep.map(function(p){ return {i:p[1],date:M.date(p[1]),chg:p[0]}; }); }
+// 熊底之后的修复里程碑（熊底 = 盘中最低；倍数按收盘价）
+function recoverRows(){
+  var live=M.cycles[M.cycles.length-1], lb=live.ev.bLo, need=maxClose(0,lb)/live.ev.botLoPrice, k=M.lastIdx-lb;
+  return M.cycles.map(function(c){
+    var e=c.ev, b=e.bLo, base=e.botLoPrice, end=M.lastIdx, ath=maxClose(0,b);
+    var first=function(pred){ for(var i=b;i<=end;i++) if(pred(i)) return i; return null; };
+    return {c:c,b:b,base:base,ath:ath,need:need,k:k,
+      x15:first(function(i){return M.close[i]>=1.5*base;}), x2:first(function(i){return M.close[i]>=2*base;}), x3:first(function(i){return M.close[i]>=3*base;}),
+      xNeed:c.complete?first(function(i){return M.close[i]>=need*base;}):null,
+      mv1:first(function(i){ for(var x=i;x<=Math.min(i+29,end);x++) if(M.mvrv[x]<1) return false; return true; }),
+      newAth:first(function(i){return M.close[i]>ath;}),
+      nh:nhIdxOf(c), nextTop:c.complete?M.cycles[c.k+1].ev.tHi:null,
+      sameK:(c.complete&&b+k<=end)?{i:b+k,chg:M.close[b+k]/base-1,max:maxClose(b,b+k)/base-1}:null,
+      now:c.complete?null:{chg:M.close[M.lastIdx]/base-1,mult:M.close[M.lastIdx]/base}};
+  });
+}
+// 两种情形：A = 本轮至今最低点就是底；B = 在表五尚未过去的熊底类比日期见底
+function scenRows(){
+  var live=M.cycles[M.cycles.length-1], rec=recoverRows(), hist=rec.filter(function(r){return r.c.complete;}), lb=live.ev.bLo, nhI=nhIdxOf(live), nh=nextHalvingMs();
+  var mm=function(f){ var a=hist.map(f); return [Math.min.apply(null,a),Math.max.apply(null,a)]; };
+  var dAth=mm(function(r){return r.newAth-r.b;}), dNeed=mm(function(r){return r.xNeed-r.b;}), dNh=mm(function(r){return r.nh-r.b;}), dTop=mm(function(r){return r.nextTop-r.b;});
+  var tops=M.cycles.slice(1).map(function(c){return c.ev.tHi-c.hIdx;}), tD=[Math.min.apply(null,tops),Math.max.apply(null,tops)];
+  var sp=analogSpan(), bA=sp.n?Math.round((sp.a-M.startMs)/DAY):null, bB=sp.n?Math.round((sp.b-M.startMs)/DAY):null, ms=function(i){ return M.startMs+i*DAY; };
+  return {lb:lb, need:rec[rec.length-1].need, span:sp, dAth:dAth, dNeed:dNeed, dNh:dNh, dTop:dTop, topD:tD, rows:[
+    {k:'ath',  A:[ms(lb+dAth[0]),ms(lb+dAth[1])],  B:sp.n?[ms(bA+dAth[0]),ms(bB+dAth[1])]:null},
+    {k:'need', A:[ms(lb+dNeed[0]),ms(lb+dNeed[1])], B:null},
+    {k:'nh',   A:nhI-lb, B:sp.n?[nhI-bB,nhI-bA]:null},
+    {k:'top1', A:[ms(lb+dTop[0]),ms(lb+dTop[1])],  B:sp.n?[ms(bA+dTop[0]),ms(bB+dTop[1])]:null},
+    {k:'top2', A:[nh+tD[0]*DAY,nh+tD[1]*DAY],     B:[nh+tD[0]*DAY,nh+tD[1]*DAY]}
+  ]};
+}
+
+/* 表七 / 表八 的 HTML（关键日期表与讲解页共用） */
+function cellDate(ms,note,wrap){ var past=ms<=M.startMs+M.lastIdx*DAY; return '<td class="'+(wrap?'':'nw')+(past?' muted':'')+'">'+fmtD(ms)+'<br><span class="sm">'+(note?note+' · ':'')+fmtDiff(ms)+'</span></td>'; }
+function rngD(a,b){ return a===b?fmtD(a):(fmtD(a)+' ~ '+fmtD(b)); }
+function htmlToday(compact){
+  var ta=todayAnalogs(), live=M.cycles[M.cycles.length-1], i=M.lastIdx, near=0, mv=[];
+  var labs={byD:'① Days after halving<br><span class="sm">this cycle: D'+ta.nD+'</span>',byTop:'② Days after the top<br><span class="sm">this cycle: '+ta.nT+' days</span>',byNext:'③ Days to next halving<br><span class="sm">this cycle: '+ta.nN+' days left</span>',byFrac:'④ Cycle progress<br><span class="sm">this cycle: '+(ta.frac*100).toFixed(1)+'%</span>'};
+  var h='<tr><th>Alignment</th>'+ta.rows.map(function(r){ return '<th>'+idKey(r.c.id)+r.c.id+' cycle, same point</th>'; }).join('')+'</tr>';
+  ['byD','byTop','byNext','byFrac'].forEach(function(k){
+    h+='<tr><td class="nw">'+labs[k]+'</td>'+ta.rows.map(function(r){ var x=r[k]; if(Math.abs(x.rel)<=45) near++; mv.push(x.mvrv);
+      return '<td'+(compact?'':' class="nw"')+'>'+x.date+'<br><span class="sm">'+relBot(x.rel)+' · MVRV '+num(x.mvrv,2)+' · from high '+pct(x.dd,0)+'</span><br><span class="sm">next 30 d '+sgnPct(x.f30)+' · 90 d '+sgnPct(x.f90)+'</span></td>'; }).join('')+'</tr>'; });
+  mv.sort(function(a,b){return a-b;}); var n=mv.length, med=n%2?mv[(n-1)/2]:(mv[n/2-1]+mv[n/2])/2;
+  h+='<tr><td class="nw"><b>This cycle today</b><br><span class="sm">'+M.lastDate+'</span></td><td colspan="'+ta.rows.length+'">MVRV <b>'+num(M.mvrv[i],2)+'</b> · from high <b>'+pct(M.dd[i],1)+'</b> · vs. the cycle low so far ('+M.date(live.ev.bLo)+' '+usd(live.ev.botLoPrice,0)+', '+(i-live.ev.bLo)+' days ago): '+sgnPct(M.close[i]/live.ev.botLoPrice-1,0)
+    +'<br><span class="sm">'+near+' of the '+n+' aligned points were within 45 days of that cycle’s bottom; their MVRV ranged '+num(mv[0],2)+'–'+num(mv[n-1],2)+', median '+num(med,2)+'. '+(M.mvrv[i]>mv[n-1]?'Today this cycle is more expensive than all '+n+': the timing matches, the valuation doesn’t.':'')+'</span></td></tr>';
+  return h;
+}
+function htmlSwan(compact){
+  if(compact) return htmlSwanCompact();
+  var h='<tr><th>Cycle</th><th>Event</th><th>Date</th><th class="num">After halving</th><th class="num">After top</th><th>To bottom</th><th class="num">That day</th><th class="num">Worst<br>within 7 d</th><th class="num">Further<br>to bottom</th><th class="num">Prev. day<br>MVRV</th><th class="num">Prev. day<br>from high</th><th>Type</th></tr>';
+  swanRows().forEach(function(r){ var live=!r.c.complete, after=r.toBot<0;
+    h+='<tr><td class="nw">'+idKey(r.c.id)+r.c.id+'</td><td>'+esc(r.s.name)+'</td><td class="nw">'+r.date+'</td><td class="num">D'+r.D+'</td><td class="num nw">'+r.aTop+' d</td><td class="nw">'+relBot(r.toBot,live)+(after?'<br><span class="sm">'+(r.m7>=r.c.ev.botLoPrice?'held that cycle’s bottom':'broke that cycle’s bottom')+'</span>':'')+'</td>'
+      +'<td class="num">'+sgnPct(r.d1,1)+'</td><td class="num">'+sgnPct(r.dd7,1)+'</td><td class="num">'+(r.toBotChg==null?'—':sgnPct(r.toBotChg,0))+'</td><td class="num">'+num(r.mvPrev,2)+'</td><td class="num">'+pct(r.ddPrev,0)+'</td><td class="nw">'+(r.s.kind==='last'?'<b>'+SWAN_KIND[r.s.kind]+'</b>':SWAN_KIND[r.s.kind])+'</td></tr>'; });
+  return h;
+}
+function htmlSwanCompact(){
+  var h='<tr><th>Event</th><th>Position on the cycle clock</th><th>To bottom</th><th class="num">Drop<br><span class="sm">that day / within 7 d / to bottom</span></th><th class="num">Previous day<br><span class="sm">MVRV / from high</span></th><th>Type</th></tr>';
+  swanRows().forEach(function(r){ var live=!r.c.complete, after=r.toBot<0;
+    h+='<tr><td>'+idKey(r.c.id)+esc(r.s.name)+'<br><span class="sm">'+r.c.id+' cycle · '+r.date+'</span></td><td class="nw">D'+r.D+'<br><span class="sm">'+r.aTop+' d after top</span></td><td>'+relBot(r.toBot,live)+(after?'<br><span class="sm">'+(r.m7>=r.c.ev.botLoPrice?'held that cycle’s bottom':'broke that cycle’s bottom')+'</span>':'')+'</td>'
+      +'<td class="num nw">'+sgnPct(r.d1,1)+' / '+sgnPct(r.dd7,0)+' / '+(r.toBotChg==null?'—':sgnPct(r.toBotChg,0))+'</td><td class="num nw">'+num(r.mvPrev,2)+' / '+pct(r.ddPrev,0)+'</td><td class="nw">'+(r.s.kind==='last'?'<b>'+SWAN_KIND[r.s.kind]+'</b>':SWAN_KIND[r.s.kind])+'</td></tr>'; });
+  return h;
+}
+function htmlTrig(compact){
+  var tr=triggerRows(), sp=triggerSpan(), an=analogSpan(), tb=tr.map(function(x){return x.toBot;});
+  var h='<tr><th>Reference event</th><th>① Days after halving</th><th>② Days after top</th><th>③ Days to next halving</th><th>④ Cycle progress</th><th class="num">Straw → bottom</th></tr>';
+  tr.forEach(function(x){ var r=x.r;
+    h+='<tr><td'+(compact?'':' class="nw"')+'>'+idKey(r.c.id)+esc(r.s.name)+'<br><span class="sm">'+r.date+' · D'+r.D+' · '+r.aTop+' d after top</span></td>'+cellDate(x.byD,'D'+r.D,compact)+cellDate(x.byTop,r.aTop+' d after top',compact)+cellDate(x.byNext,(nhIdxOf(r.c)-r.i)+' d before next halving',compact)+cellDate(x.byFrac,((r.i-r.c.hIdx)/cycLen(r.c)*100).toFixed(1)+'% of cycle',compact)+'<td class="num">'+x.toBot+' d</td></tr>'; });
+  h+='<tr><td colspan="6" class="sm" style="white-space:normal">'+(sp.n?((sp.n===1?'The one date still ahead: ':'The '+sp.n+' dates still ahead: ')+sp.all.map(function(ms){ return fmtD(ms)+' ('+fmtDiff(ms)+')'; }).join(', ')+'. '):'All 12 dates have passed. ')
+    +'Historically the bottom came '+Math.min.apply(null,tb)+'–'+Math.max.apply(null,tb)+' days after the straw; the matching bottom analogs are in table 5'+(an.n?' (the '+an.n+' dates not yet passed fall between '+fmtD(an.a)+' and '+fmtD(an.b)+')':' (all already passed)')+'. With only three cycles, this is a sense of rhythm, not a forecast.</td></tr>';
+  return h;
+}
+function unNw(h){ return h.replace(/ class="nw"/g,'').replace(/class="num nw"/g,'class="num"').replace(/class="nw muted"/g,'class="muted"').replace(/class="muted nw"/g,'class="muted"'); }
+function htmlCrash(){
+  var h='<tr><th>Cycle</th><th class="num">Count</th><th>Each one (deepest day of the 7-day drop · 7-day change)</th></tr>';
+  M.cycles.forEach(function(c){ var ep=crashEpisodes(c,-0.2);
+    h+='<tr><td class="nw">'+idKey(c.id)+c.id+(c.complete?' cycle':' cycle (so far)')+'</td><td class="num">'+ep.length+'</td><td style="white-space:normal">'+(ep.length?ep.map(function(p){ return '<span class="nw">'+p.date+' <b>'+sgnPct(p.chg,0)+'</b></span>'; }).join(' &nbsp;'):'—')+'</td></tr>'; });
+  return h;
+}
+function htmlRec(compact){
+  var rec=recoverRows(), lv=rec[rec.length-1], need=lv.need;
+  var cell=function(r,i){ return i==null?'<td class="muted">not yet</td>':'<td class="nw">'+(i-r.b)+' d<br><span class="sm">'+M.date(i)+'</span></td>'; };
+  var notYet=function(r,extra){ return '<td class="muted nw">not yet'+(extra?'<br><span class="sm">'+extra+'</span>':'')+'</td>'; };
+  var h='<tr><th>Milestone (counted from the intraday bottom)</th>'+rec.map(function(r){ return '<th class="nw">'+idKey(r.c.id)+r.c.id+(r.c.complete?' cycle':' cycle (so far)')+'</th>'; }).join('')+'</tr>';
+  h+='<tr><td>Bottom (intraday low)</td>'+rec.map(function(r){ return '<td class="nw">'+M.date(r.b)+'<br><span class="sm">'+usd(r.base,r.base<1000?2:0)+(r.c.complete?'':' · low so far')+'</span></td>'; }).join('')+'</tr>';
+  [['Close ×1.5','x15'],['Close ×2','x2'],['Close ×3','x3']].forEach(function(m){ h+='<tr><td>'+m[0]+'</td>'+rec.map(function(r){ return (r[m[1]]==null&&r.now)?notYet(r,'now ×'+r.now.mult.toFixed(2)):cell(r,r[m[1]]); }).join('')+'</tr>'; });
+  h+='<tr><td>Close ×'+need.toFixed(2)+'<br><span class="sm">= the multiple this cycle needs from its low to regain the previous high of '+usd(lv.ath,0)+'</span></td>'+rec.map(function(r){ return r.c.complete?cell(r,r.xNeed):notYet(r,'now ×'+r.now.mult.toFixed(2)); }).join('')+'</tr>';
+  h+='<tr><td>MVRV back above 1 and held for 30 days</td>'+rec.map(function(r){ return (!r.c.complete&&r.mv1===r.b)?'<td class="nw">never fell below 1</td>':cell(r,r.mv1); }).join('')+'</tr>';
+  h+='<tr><td>New all-time-high close<br><span class="sm">above the highest close before the bottom</span></td>'+rec.map(function(r){ return (r.newAth==null&&!r.c.complete)?notYet(r,'prev. high '+usd(r.ath,0)):cell(r,r.newAth); }).join('')+'</tr>';
+  h+='<tr><td>Next halving</td>'+rec.map(function(r){ return r.c.complete?cell(r,r.nh):'<td class="nw">'+(r.nh-r.b)+' d<br><span class="sm">'+M.date(r.nh)+' (est.)</span></td>'; }).join('')+'</tr>';
+  h+='<tr><td>Next cycle top (intraday high)</td>'+rec.map(function(r){ return r.c.complete?cell(r,r.nextTop):'<td class="muted">—</td>'; }).join('')+'</tr>';
+  h+='<tr><td>Gain on day '+lv.k+' after the bottom<br><span class="sm">the same day count as this cycle today</span></td>'+rec.map(function(r){ if(r.c.complete) return r.sameK?'<td class="nw">'+sgnPct(r.sameK.chg,0)+'<br><span class="sm">'+M.date(r.sameK.i)+' · max in between '+sgnPct(r.sameK.max,0)+'</span></td>':'<td>—</td>'; return '<td class="nw"><b>'+sgnPct(r.now.chg,0)+'</b><br><span class="sm">'+M.lastDate+'</span></td>'; }).join('')+'</tr>';
+  return compact?unNw(h):h;
+}
+function htmlScen(compact){
+  var s=scenRows(), nhD=fmtD(nextHalvingMs());
+  var lab={ath:'Back to the previous high<br><span class="sm">by day count</span>',need:'Back to the previous high<br><span class="sm">by gain (×'+s.need.toFixed(2)+')</span>',nh:'Next halving (est. '+nhD+')<br><span class="sm">days from the bottom</span>',top1:'Next cycle top<br><span class="sm">“bottom + days”</span>',top2:'Next cycle top<br><span class="sm">“days after halving”</span>'};
+  var basis={ath:'Previous three cycles: bottom → new high close in '+s.dAth[0]+'–'+s.dAth[1]+' days',need:'Previous three cycles took '+s.dNeed[0]+'–'+s.dNeed[1]+' days to gain the same multiple from the bottom',nh:'Previous three cycles: '+s.dNh[0]+'–'+s.dNh[1]+' days',top1:'Previous three cycles: bottom → next top in '+s.dTop[0]+'–'+s.dTop[1]+' days',top2:'The 2016 / 2020 / current tops came at D'+s.topD[0]+'–D'+s.topD[1]+' after the halving (2012’s D367 is too early and left out)'};
+  var h='<tr><th></th><th>Scenario A: the low so far<br><span class="sm">('+M.date(s.lb)+') was the bottom</span></th><th>Scenario B: the bottom comes on a table-5 analog date still ahead'+(s.span.n?'<br><span class="sm">('+fmtD(s.span.a)+' to '+fmtD(s.span.b)+')</span>':'')+'</th><th>Basis</th></tr>';
+  s.rows.forEach(function(r){ var A,B;
+    if(r.k==='nh'){ A=r.A+' days<br><span class="sm">'+(r.A>s.dNh[1]?(r.A-s.dNh[1])+' days longer than the longest on record':(r.A<s.dNh[0]?(s.dNh[0]-r.A)+' days shorter than the shortest on record':'within the historical range'))+'</span>';
+      B=r.B?(r.B[0]+'–'+r.B[1]+' days<br><span class="sm">'+((r.B[0]>=s.dNh[0]-30&&r.B[1]<=s.dNh[1]+30)?'consistent with history':'off the historical range')+'</span>'):'<span class="sm">all analog dates have passed</span>'; }
+    else { A=rngD(r.A[0],r.A[1]); B=r.B?rngD(r.B[0],r.B[1]):(r.k==='need'?'<span class="sm">depends on the final low</span>':'<span class="sm">all analog dates have passed</span>'); }
+    h+='<tr><td class="nw">'+lab[r.k]+'</td><td class="nw">'+A+'</td><td class="nw">'+B+'</td><td class="sm" style="white-space:normal">'+basis[r.k]+'</td></tr>'; });
+  return compact?unNw(h):h;
+}
+function htmlLevels(){ // 按今天 RP 折算的几个 MVRV 价位
+  var rp=M.rpNow, c=M.close[M.lastIdx], live=M.cycles[M.cycles.length-1];
+  return [[1.0,'MVRV 1.0 (below the network cost basis)'],[0.9,'MVRV 0.9'],[0.83,'MVRV 0.83 (the level the day before the Bitstamp hack)'],[0.75,'MVRV 0.75 (the 2020 cycle’s low)']].map(function(x){ return x[1]+' → <b>'+usd(rp*x[0],0)+'</b> ('+sgnPct(rp*x[0]/c-1,0)+')'; }).join('; ')
+    +'. The cycle low so far is '+usd(live.ev.botLoPrice,0)+' ('+M.date(live.ev.bLo)+'), '+sgnPct(live.ev.botLoPrice/c-1,0)+' from today.';
+}
+
+/* ---------- tiles & tables ---------- */
+function renderTiles(){
+  var live=M.cycles[M.cycles.length-1], n=M.lastIdx-live.hIdx, ev=live.ev, i=M.lastIdx;
+  var tiles=[
+    ['Cycle progress (2024-04-20 halving)','Day '+n,(n/30.4375).toFixed(1)+' months elapsed (month '+(Math.floor(n/30.4375)+1)+') · data to '+M.lastDate],
+    ['BTC close',usd(M.close[i],0),M.lastDate+' UTC close'],
+    ['MVRV',num(M.mvrv[i],3),'cycle low '+num(M.mvrv[ev.mMin],3)+' ('+M.date(ev.mMin)+')'],
+    ['Realized price RP (cost basis)',usd(M.rpNow,0),'= close ÷ MVRV'],
+    ['Cycle intraday low (so far)',usd(ev.botLoPrice,0),M.date(ev.bLo)+' · D'+(ev.bLo-live.hIdx)],
+    ['From the highest close',pct(M.dd[i],1),'high '+usd(M.close[ev.tCl],0)+' ('+M.date(ev.tCl)+')']
+  ];
+  $('tiles').innerHTML=tiles.map(function(t){ return '<div class="tile" title="'+esc(t[0]+': '+t[1]+'  '+t[2])+'"><div class="r1"><div class="k">'+esc(t[0])+'</div><div class="v">'+esc(t[1])+'</div></div><div class="s">'+esc(t[2])+'</div></div>'; }).join('');
+}
+function renderTables(){
+  var R=roles(), live=M.cycles[M.cycles.length-1];
+  function key(c){ return '<span class="key '+R[c.id].role+'"></span>'; }
+  function cell(idx,c,val){ return M.date(idx)+'<br><span class="sm">D'+(idx-c.hIdx)+' · '+val+'</span>'; }
+  // T1
+  var h='<tr><th>Cycle</th><th>Halving (block / UTC time)</th><th>Top · intraday high</th><th>Top · highest close</th><th>MVRV peak</th><th>Bottom · intraday low</th><th>Bottom · lowest close</th><th>MVRV low</th><th>MVRV&lt;1 bottom zone: first → last day</th><th class="num">Top → bottom</th><th class="num">Max drawdown</th></tr>';
+  M.cycles.forEach(function(c){ var e=c.ev, prov=!c.complete?'<br><span class="sm">(so far; not necessarily the final bottom)</span>':'';
+    h+='<tr><td>'+key(c)+c.id+(c.complete?'':' (current)')+'</td><td>'+c.hDate+'<br><span class="sm">#'+c.block.toLocaleString('en-US')+' · '+c.utc.slice(11)+'</span></td>'
+      +'<td>'+cell(e.tHi,c,usd(e.topHiPrice,0))+'</td><td>'+cell(e.tCl,c,usd(M.close[e.tCl],0))+'</td><td>'+cell(e.mMax,c,num(M.mvrv[e.mMax],3))+'</td>'
+      +'<td>'+cell(e.bLo,c,usd(e.botLoPrice))+prov+'</td><td>'+cell(e.bCl,c,usd(M.close[e.bCl]))+'</td><td>'+cell(e.mMin,c,num(M.mvrv[e.mMin],3))+'</td>'
+      +'<td>'+(e.zones.length?(M.date(e.zones[0].a)+' → '+M.date(e.zones[0].b)+'<br><span class="sm">D'+(e.zones[0].a-c.hIdx)+' → D'+(e.zones[0].b-c.hIdx)+' · '+e.zones[0].days+' days &lt;1</span>'+e.zones.slice(1).map(function(z){ return '<br><span class="sm">also: '+M.date(z.a)+' → '+M.date(z.b)+' (D'+(z.a-c.hIdx)+'–D'+(z.b-c.hIdx)+', '+z.days+' days)</span>'; }).join('')):'<span class="sm">not below 1 so far this cycle</span>')+'</td>'
+      +'<td class="num">'+(e.bLo-e.tHi)+' d</td><td class="num">'+pct(e.botLoPrice/e.topHiPrice-1,1)+'</td></tr>'; });
+  $('tb-cycles').innerHTML=h;
+  // T2
+  var m='<tr><th>Milestone</th><th>Actual date</th><th class="num">After its halving</th><th>On this cycle’s calendar</th><th class="num">From latest data ('+M.lastDate+')</th></tr>';
+  var rowsM=[]; M.cycles.forEach(function(c){ if(!c.complete) return; var e=c.ev;
+    [['Top (intraday high)',e.tHi],['MVRV first below 1',e.zones.length?e.zones[0].a:-1],['Bottom (intraday low)',e.bLo],['MVRV low',e.mMin],['Last day of the MVRV<1 zone',e.zones.length?e.zones[0].b:-1]].forEach(function(p){ if(p[1]<0) return; rowsM.push({c:c,lab:p[0],idx:p[1],n:p[1]-c.hIdx}); }); });
+  rowsM.sort(function(a,b){return a.n-b.n;});
+  rowsM.forEach(function(r){ var ms=live.hMs+r.n*DAY, diff=Math.round((ms-(M.startMs+M.lastIdx*DAY))/DAY);
+    m+='<tr><td>'+key(r.c)+r.c.id+' cycle · '+r.lab+'</td><td>'+M.date(r.idx)+'</td><td class="num">D'+r.n+'</td><td>'+fmtD(ms)+'</td><td class="num">'+(diff===0?'today':(diff>0?('in '+diff+(diff===1?' day':' days')):((-diff)+(diff===-1?' day ago':' days ago'))))+'</td></tr>'; });
+  $('tb-map').innerHTML=m;
+  // T3 —— 合一区间 + 之后走势（回测）
+  var trio=trioOf(S.persp), bt=backtestBands(S.persp,S.thr);
+  $('tb-band-hint').innerHTML='Current view: <b>the '+S.persp+' cycle is the red line</b> ('+[trio[1],trio[2]].map(function(c){ return {green:'green',blue:'blue',gray:'gray',red:'red'}[R[c.id].role]+' = '+c.id; }).join(', ')+'); threshold <b>'+Math.round(S.thr*100)+'%</b>; neighboring periods ≤3 days apart are merged and periods shorter than 5 days are dropped. To change the view or threshold, go back to the first tab. The last four columns show what followed the end of each convergence, to test “convergence = synchronization”.';
+  var b='<tr><th>#</th><th>Red-line dates</th><th class="num">After halving</th><th class="num">Length</th><th class="num">Red-line close range</th><th class="num">Red-line MVRV range</th><th class="num">Min spread</th><th class="num">Next 90 days</th><th class="num">Next 180 days</th><th class="num">Max drawdown within 180 d</th><th>The two historical lines’ MVRV over the same 180 days</th></tr>';
+  bt.forEach(function(r,j){
+    b+='<tr><td>'+(j+1)+'</td><td>'+r.d0+' → '+r.d1+'</td><td class="num">D'+r.a+' → D'+r.b+'</td><td class="num">'+r.days+' d</td><td class="num">'+usd(r.lo,0)+' ~ '+usd(r.hi,0)+'</td><td class="num">'+num(r.ml,2)+' ~ '+num(r.mh,2)+'</td><td class="num">'+pct(r.ms,1)+'</td>'
+      +'<td class="num">'+sgnPct(r.f90)+'</td><td class="num"><b>'+sgnPct(r.f180)+'</b></td><td class="num">'+sgnPct(r.dd180)+'</td><td>'+r.hist.map(function(h){ return h.id+' '+sgnPct(h.chg); }).join(' · ')+'</td></tr>'; });
+  if(!bt.length) b+='<tr><td colspan="11" class="muted">No periods qualify at the current threshold</td></tr>';
+  $('tb-bands').innerHTML=b;
+  // T4
+  var hist=M.cycles.filter(function(c){return c.complete;}), len=Math.min.apply(null,hist.map(function(c){return c.len;})), fl=[];
+  for(var n=0;n<len;n++) fl.push(hist.every(function(c){ return M.mvrv[c.hIdx+n]<1; }));
+  var runs=mergeRuns(runsOf(fl),0,1), t4='<tr><th>#</th><th class="num">After halving</th><th class="num">Months elapsed</th><th class="num">Length</th>'+hist.map(function(c){return '<th>'+c.id+' cycle dates</th>';}).join('')+'<th>On this cycle’s calendar</th></tr>';
+  runs.forEach(function(r,j){ t4+='<tr><td>'+(j+1)+'</td><td class="num">D'+r[0]+' → D'+r[1]+'</td><td class="num">'+(r[0]/30.4375).toFixed(1)+' → '+(r[1]/30.4375).toFixed(1)+'</td><td class="num">'+(r[1]-r[0]+1)+' d</td>'
+    +hist.map(function(c){return '<td>'+M.date(c.hIdx+r[0])+' → '+M.date(c.hIdx+r[1])+'</td>';}).join('')+'<td>'+fmtD(live.hMs+r[0]*DAY)+' → '+fmtD(live.hMs+r[1]*DAY)+'</td></tr>'; });
+  $('tb-below').innerHTML=t4;
+  // T5 —— 熊底时间类比
+  var ar=analogRows(), sp5=analogSpan(), lt=live.ev.tHi, nh=nextHalvingMs(), lastMs=M.startMs+M.lastIdx*DAY;
+  $('tb-analog-hint').innerHTML='This cycle’s halving: 2024-04-20; this cycle’s top (intraday high): '+M.date(lt)+' (D'+(lt-live.hIdx)+'); next halving (block 1,050,000) estimated around '+fmtD(nh)+', which makes this cycle about '+cycLen(live)+' days long. Gray = dates that have already passed.';
+  var t5='<tr><th>Reference cycle</th><th>Its bottom (intraday low)</th><th>① Days after halving</th><th>② Days after top</th><th>③ Days to next halving</th><th>④ Share of cycle length</th></tr>';
+  ar.forEach(function(r){
+    var cellA=function(ms,note){ var past=ms<=lastMs; return '<td'+(past?' class="muted"':'')+'>'+fmtD(ms)+'<br><span class="sm">'+note+' · '+fmtDiff(ms)+'</span></td>'; };
+    t5+='<tr><td>'+idKey(r.c.id)+r.c.id+' cycle</td><td>'+M.date(r.c.ev.bLo)+'<br><span class="sm">'+usd(r.c.ev.botLoPrice)+' · D'+r.bD+'</span></td>'
+      +cellA(r.byD,'D'+r.bD)+cellA(r.byT2B,r.t2b+' d after top')+cellA(r.byB2N,r.b2n+' d before next halving')+cellA(r.byFrac,(r.frac*100).toFixed(1)+'% of cycle')+'</tr>'; });
+  t5+='<tr><td colspan="6" class="sm">The '+sp5.n+' dates not yet passed span '+(sp5.n?fmtD(sp5.a)+' to '+fmtD(sp5.b):'—')+'. This cycle’s low so far: '+M.date(live.ev.bLo)+' (D'+(live.ev.bLo-live.hIdx)+', '+usd(live.ev.botLoPrice)+'). With only three cycles, this is a sense of rhythm, not a forecast.</td></tr>';
+  $('tb-analog').innerHTML=t5;
+  // T6 —— Murphy 式折算
+  var mr=murphyRows(16), rpN=M.rpNow, gC=M.cycles[2], bC=M.cycles[1], nowD=M.lastIdx-live.hIdx;
+  $('tb-murphy-hint').innerHTML='Today ('+M.lastDate+') RP = <b>'+usd(rpN,0)+'</b>, red-line MVRV '+num(M.mvrv[M.lastIdx],3)+' ('+usd(M.close[M.lastIdx],0)+'). Scaled price = the historical line’s MVRV on the same D × today’s RP. RP changes every day, so this is a “dynamic” like-for-like valuation, not a price forecast.';
+  var t6='<tr><th>This cycle’s date</th><th class="num">D</th><th>'+idKey('2020')+'2020 cycle date</th><th class="num">MVRV</th><th class="num">Scaled price</th><th>'+idKey('2016')+'2016 cycle date</th><th class="num">MVRV</th><th class="num">Scaled price</th><th>Note</th></tr>';
+  mr.forEach(function(r){ var gm=M.mvrv[r.gi], bm=M.mvrv[r.bi], note=[];
+    if(r.n===nowD) note.push('today');
+    if(r.gi===gC.ev.mMin) note.push('2020 cycle MVRV low'); if(r.gi===gC.ev.bLo) note.push('2020 cycle bottom');
+    if(r.bi===bC.ev.bLo) note.push('2016 cycle bottom'+(bC.ev.mMin===bC.ev.bLo?' (also its MVRV low)':''));
+    t6+='<tr><td>'+fmtD(r.cal)+'</td><td class="num">D'+r.n+'</td><td>'+M.date(r.gi)+'</td><td class="num">'+num(gm,3)+'</td><td class="num">'+usd(gm*rpN,0)+'</td><td>'+M.date(r.bi)+'</td><td class="num">'+num(bm,3)+'</td><td class="num">'+usd(bm*rpN,0)+'</td><td class="sm">'+note.join(', ')+'</td></tr>'; });
+  $('tb-murphy').innerHTML=t6;
+  // T7 / T8 —— 今天在哪、最后一根稻草、熊底后修复
+  var ta=todayAnalogs();
+  $('tb-today-hint').innerHTML='This cycle today ('+M.lastDate+'): day '+ta.nD+' after the halving, day '+ta.nT+' after the top, '+ta.nN+' days to the next halving (est. '+fmtD(nextHalvingMs())+'), '+(ta.frac*100).toFixed(1)+'% through the cycle. Each of these four “clocks” finds the same point in the previous three cycles, showing how far that point was from the bottom and how expensive it was.';
+  $('tb-today').innerHTML=htmlToday(); $('tb-swan').innerHTML=htmlSwan(); $('tb-trig').innerHTML=htmlTrig(); $('tb-crash').innerHTML=htmlCrash();
+  $('tb-rec').innerHTML=htmlRec(); $('tb-scen').innerHTML=htmlScen(); $('tb-levels').innerHTML='At today’s RP ('+usd(M.rpNow,0)+'): '+htmlLevels();
+}
+function renderFoot(){
+  var meta=RAW.meta, eta='';
+  if(meta.tip_height){ eta=' · next halving (block '+meta.next_halving_block.toLocaleString('en-US')+') estimated around '+fmtD(nextHalvingMs())+' (extrapolated at '+(meta.avg_block_min?'this cycle’s average '+meta.avg_block_min.toFixed(2)+' min/block':'10 min/block')+'; height '+meta.tip_height.toLocaleString('en-US')+' on '+meta.tip_utc.slice(0,10)+')'; }
+  var site=meta.site||{}, a=function(href,txt){ return '<a href="'+esc(href)+'" target="_blank" rel="noopener">'+esc(txt)+'</a>'; };
+  var nr=$('n-repo'); if(nr){ if(site.repo_url){ nr.hidden=false; nr.innerHTML='<b>Source code and rebuild script:</b> '+a(site.repo_url,site.repo_url)+' (with just Python 3 you can re-download all the data, validate it and regenerate this page).'; } else nr.hidden=true; }
+  var by=site.author?('Made by '+(site.author_url?a(site.author_url,site.author):esc(site.author))+' · '):'';
+  $('foot').innerHTML=by+'Version '+esc(site.version||'1.0')+' · embedded data through '+esc(meta.last_date)+' (UTC), built '+esc(meta.built_utc)+' UTC'+esc(eta)+'. '
+    +'<br>Method: Murphy ('+a('https://x.com/Murphychen888','@Murphychen888')+')’s “three-line convergence” (halving-aligned MVRV overlay); this page is an independent replication, not his official work. '
+    +'Data: '+a('https://coinmetrics.io/community-network-data/','Coin Metrics Community Data')+' (CC BY-NC 4.0, non-commercial use only), Bitstamp daily candles, mempool.space. '
+    +'Charts: Apache ECharts (Apache-2.0, embedded). Everything is computed in your browser; this page collects no data. Not investment advice.';
+}
+function setStatus(kind,html){ $('st-line').innerHTML='<span class="dot '+kind+'"></span>'+html; }
+function isSnapshot(){ var s=(RAW.meta&&RAW.meta.site)||{}; return s.edition==='snapshot'; } // 快照版：数据固定，不联网、不导出、不分享（如嵌在 claude.ai 里的预览）
+function describeData(){
+  var s='Data through <b>'+M.lastDate+'</b>'; if(M.deltaDays>0) s+=' (file embeds data to '+M.embeddedLast+'; '+M.deltaDays+' days added on this device)';
+  return s;
+}
+
+/* ---------- live update ---------- */
+function fetchJson(url, ms){ var ctl=new AbortController(), tm=setTimeout(function(){ctl.abort();}, ms||20000);
+  return fetch(url,{signal:ctl.signal,cache:'no-store'}).then(function(r){ clearTimeout(tm); if(!r.ok) throw new Error('HTTP '+r.status); return r.json(); }, function(e){ clearTimeout(tm); throw e; }); }
+var updating=false;
+function liveUpdate(silent){
+  if(updating) return Promise.resolve(); updating=true; $('btn-update').disabled=true;
+  if(!silent) setStatus('busy','Updating…');
+  var fromMs=parseD(RAW.meta.last_date)-10*DAY, from=fmtD(fromMs);
+  var cmUrl='https://community-api.coinmetrics.io/v4/timeseries/asset-metrics?assets=btc&metrics=CapMVRVCur,PriceUSD&frequency=1d&start_time='+from+'&page_size=10000';
+  var bsUrl='https://www.bitstamp.net/api/v2/ohlc/btcusd/?step=86400&limit=1000&start='+Math.round(fromMs/1000);
+  return Promise.all([fetchJson(cmUrl), fetchJson(bsUrl).catch(function(){return null;})]).then(function(res){
+    var cm=res[0], bs=res[1], rows={}, bsMap={};
+    if(bs&&bs.data&&bs.data.ohlc) bs.data.ohlc.forEach(function(c){ bsMap[fmtD(+c.timestamp*1000)]={o:+c.open,h:+c.high,l:+c.low,c:+c.close,v:+c.volume}; });
+    (cm.data||[]).forEach(function(r){ var d=r.time.slice(0,10), mv=+r.CapMVRVCur, p=+r.PriceUSD; if(!(mv>0)||!(p>0)) return; var b=bsMap[d], ok=b&&b.v>0&&b.l*0.97<=p&&p<=b.h*1.03;
+      rows[d]=[Math.round(mv*1e4)/1e4, Math.round(p*100)/100, ok?b.h:null, ok?b.l:null]; });
+    var prev=lsGet(LS_DELTA)||{rows:{}}; Object.keys(rows).forEach(function(d){ prev.rows[d]=rows[d]; }); prev.fetched_utc=new Date().toISOString().slice(0,19).replace('T',' ');
+    lsSet(LS_DELTA,prev);
+    var before=M.lastDate; M=buildModel(RAW,prev);
+    // intraday estimate(s): Bitstamp days after the last official day
+    EST=[]; var rp=M.rpNow; Object.keys(bsMap).sort().forEach(function(d){ var idx=M.idxOf(d); if(idx>M.lastIdx && idx<=M.lastIdx+3 && bsMap[d].c>0) EST.push({idx:idx,date:d,close:bsMap[d].c,hi:bsMap[d].h,lo:bsMap[d].l,mvrv:bsMap[d].c/rp}); });
+    renderAll(true);
+    setStatus('ok',describeData()+(M.lastDate>before?' · updated to '+M.lastDate:' · already up to date'));
+    $('st-detail').innerHTML='Last online update: '+prev.fetched_utc+' UTC. '+(M.revised?(M.revised+' past days were slightly revised by the data source; the new values are used.'):'');
+  }).catch(function(e){
+    if(!silent) setStatus('err',describeData()+' · update failed ('+esc(e&&e.name==='AbortError'?'timed out':(e&&e.message)||e)+'); the page still works offline');
+    else setStatus('',describeData()+' · not updated online (the page still works offline)');
+  }).then(function(){ updating=false; $('btn-update').disabled=false; });
+}
+function renderEstNote(){
+  var el=$('est-note'); if(!EST.length){ el.style.display='none'; return; }
+  var e=EST[EST.length-1]; el.style.display='block';
+  el.innerHTML='Intraday estimate (<b>unofficial</b>): the UTC day '+e.date+' has not closed yet; Bitstamp last price '+usd(e.close,0)+'; with the previous day’s RP of '+usd(M.rpNow,0)+', MVRV ≈ <b>'+num(e.mvrv,3)+'</b>. Shown on the chart as a hollow dot with a dashed line and left out of every table.';
+}
+
+/* ---------- 讲解页（讲透三线合一） ---------- */
+var gCharts={}, tocBuilt=false, printing=null, PRINT_W=700, FONT='system-ui,-apple-system,"Segoe UI","Microsoft YaHei","PingFang SC",sans-serif';
+function guideOn(){ var p=$('tab-guide'); return !!(p && p.classList.contains('on')); }
+function disposeGuide(){ Object.keys(gCharts).forEach(function(k){ try{ gCharts[k].dispose(); }catch(e){} }); gCharts={}; }
+function gInit(id){ var el=$(id); if(!el) return null; if(gCharts[id]){ try{ gCharts[id].dispose(); }catch(e){} } gCharts[id]=echarts.init(el,null,{renderer:'svg'}); return gCharts[id]; }
+function gTip(){ return { backgroundColor:isDark()?'#262624':'#ffffff', borderColor:isDark()?'#383835':'#e1e0d9', borderWidth:1, padding:[8,10], confine:true, transitionDuration:0,
+  textStyle:{color:isDark()?'#fff':'#0b0b0b',fontSize:12.5,fontFamily:FONT}, extraCssText:'box-shadow:0 6px 24px rgba(0,0,0,.18);border-radius:10px;' }; }
+function gBase(){ return { animation:false, backgroundColor:'transparent', textStyle:{fontFamily:FONT} }; }
+var DOWN='path://M0,0 L10,0 L5,9 Z';
+function lineKey(color){ return '<span style="display:inline-block;width:12px;border-top:3px solid '+color+';border-radius:2px;vertical-align:middle;margin-right:6px"></span>'; }
+
+function buildToc(){
+  var toc=$('g-toc'), body=$('g-body'); if(!toc||!body) return; if(tocBuilt && toc.innerHTML) return;
+  var hs=body.querySelectorAll('h2, h3'), html='<div class="tt0">Contents</div>';
+  Array.prototype.forEach.call(hs,function(h,i){ if(!h.id) h.id='gh-'+i; var c=h.cloneNode(true); Array.prototype.forEach.call(c.querySelectorAll('.hlink,.livechip'),function(x){ x.remove(); });
+    html+='<a href="#'+h.id+'" class="'+(h.tagName==='H3'?'h3':'h2')+'">'+esc(c.textContent.trim())+'</a>'; });
+  toc.innerHTML=html; tocBuilt=true; addHeadingLinks(body,'guide');
+}
+function atD(c,n){ return (n>=0 && n<c.len)?c.hIdx+n:null; }
+function htmlNow(){ // 讲解页第 0 节和第 5 节顶部的实时框
+  var live=M.cycles[M.cycles.length-1], n=M.lastIdx-live.hIdx, i=M.lastIdx, rp=M.rpNow, e=live.ev, r=M.mvrv[i];
+  var gi=atD(M.cycles[2],n), bi=atD(M.cycles[1],n), g=gi!=null?M.mvrv[gi]:r, b=bi!=null?M.mvrv[bi]:r, sp=(Math.max(r,g,b)-Math.min(r,g,b))/((r+g+b)/3);
+  var pos=r>=Math.max(g,b)?'on top (deviating upward)':(r<=Math.min(g,b)?'at the bottom (deviating downward)':'in the middle'), an=analogSpan(), ts=triggerSpan();
+  var html='<div class="row"><span><span class="livechip">Live</span> Latest data <b>'+M.lastDate+'</b> (this cycle D'+n+', month '+(Math.floor(n/30.4375)+1)+')</span><span>Close <b>'+usd(M.close[i],0)+'</b></span><span>MVRV <b>'+num(r,3)+'</b></span><span>RP <b>'+usd(rp,0)+'</b></span></div>';
+  html+='<div class="row">'+[[M.cycles[2],'Green'],[M.cycles[1],'Blue'],[M.cycles[0],'Gray']].map(function(x){ var c=x[0], k=atD(c,n); return k==null?'':'<span>'+idKey(c.id)+x[1]+' · '+c.id+' cycle '+M.date(k)+': MVRV <b>'+num(M.mvrv[k],3)+'</b> (scaled '+usd(M.mvrv[k]*rp,0)+')</span>'; }).join('')+'</div>';
+  html+='<div class="row"><span>R/G/B spread <b>'+pct(sp,1)+'</b>, the red line is '+pos+'</span><span>'+(i-e.tHi)+' days since this cycle’s top</span><span>Cycle low so far '+usd(e.botLoPrice,0)+' ('+M.date(e.bLo)+'); today '+sgnPct(M.close[i]/e.botLoPrice-1,0)+'</span></div>';
+  html+='<div class="row"><span>Bottom timing analogs (table 5): '+(an.n?an.n+(an.n===1?' date':' dates')+' still ahead, <b>'+fmtD(an.a)+(an.b!==an.a?' to '+fmtD(an.b):'')+'</b>':'all 12 dates have passed')+'</span><span>“Last straw” analogs (table 7): '+(ts.n?ts.n+' left, <b>'+fmtD(ts.a)+(ts.b!==ts.a?' to '+fmtD(ts.b):'')+'</b>':'all passed')+'</span></div>';
+  return html;
+}
+function renderGuideLive(){ ['g-now','g-live'].forEach(function(id){ var el=$(id); if(el) el.innerHTML=htmlNow(); }); }
+function analogAll(){ var out=[]; analogRows().forEach(function(r){ out.push(r.byD,r.byT2B,r.byB2N,r.byFrac); }); return out.sort(function(a,b){return a-b;}); }
+function catchUp(n,level){ // 两条历史线第一次涨到某个 MVRV 水平的 D（D1150 以内），与第 5.2 节的图一致
+  var g=M.cycles[2], bl=M.cycles[1], res={b:null,g:null,both:null}, d, x, y;
+  for(d=n+1; d<=1150; d++){ x=atD(bl,d); if(x==null) break; if(M.mvrv[x]>=level){ res.b=d; break; } }
+  for(d=n+1; d<=1150; d++){ x=atD(g,d); if(x==null) break; if(M.mvrv[x]>=level){ res.g=d; break; } }
+  for(d=n+1; d<=1150; d++){ x=atD(g,d); y=atD(bl,d); if(x==null||y==null) break; if(Math.min(M.mvrv[x],M.mvrv[y])>=level*0.95){ res.both=d; break; } }
+  return res;
+}
+function liveText(){ // 讲解页正文里所有会随时间变化的数字和句子
+  var live=M.cycles[M.cycles.length-1], i=M.lastIdx, n=i-live.hIdx, rp=M.rpNow, r=M.mvrv[i], c=M.close[i], e=live.ev;
+  var g=M.cycles[2], bl=M.cycles[1], gr=M.cycles[0], L={}, d;
+  var dd=function(x){ return fmtD(live.hMs+x*DAY); }, mk=function(k){ return Math.floor(k/30.4375)+1; };
+  var an=analogSpan(), ts=triggerSpan(), lastMs=M.startMs+i*DAY, lowMs=M.startMs+e.bLo*DAY, minMv=M.mvrv[e.mMin];
+  L.lastDate=M.lastDate; L.lowDate=M.date(e.bLo); L.lowPrice=usd(e.botLoPrice,0); L.rp=usd(rp,0); L.mvrv=num(r,2);
+  L.minMv=num(minMv,2); var lr=e.botLoPrice/rpAt(e.bLo)-1;
+  L.p43='This cycle’s low so far ('+M.date(e.bLo)+', '+usd(e.botLoPrice,0)+')'+(lr>=0?' is still '+pct(lr,1)+' above that day’s RP ('+usd(rpAt(e.bLo),0)+'): a first.':' fell '+pct(-lr,1)+' below that day’s RP ('+usd(rpAt(e.bLo),0)+'), breaking the network cost basis like the earlier cycles.');
+  L.dnow='Today ('+M.lastDate+') is D'+n+' of this cycle: '+(n/30.4375).toFixed(1)+' months elapsed, i.e. month '+mk(n)+'. ';
+  // 5.1
+  var gi=atD(g,n), bi=atD(bl,n), gri=atD(gr,n), gm=gi!=null?M.mvrv[gi]:r, bm=bi!=null?M.mvrv[bi]:r;
+  var sp=(Math.max(r,gm,bm)-Math.min(r,gm,bm))/((r+gm+bm)/3), pos=r>=Math.max(gm,bm)?'top':(r<=Math.min(gm,bm)?'bottom':'mid');
+  var streak=0; if(pos!=='mid'){ for(d=n; d>=0; d--){ var a1=M.mvrv[live.hIdx+d], a2=M.mvrv[g.hIdx+d], a3=M.mvrv[bl.hIdx+d]; if(pos==='top'?(a1>=a2&&a1>=a3):(a1<=a2&&a1<=a3)) streak++; else break; } }
+  var spS=spreadSeries(trioOf(live.id)), spMax=0, spMaxD=0; for(d=0; d<=n && d<spS.length; d++){ if(spS[d]>spMax){ spMax=spS[d]; spMaxD=d; } }
+  L.p51='Day '+n+' of this cycle (month '+mk(n)+'), close '+usd(c,0)+', MVRV <b>'+num(r,3)+'</b>. On the same D: '
+    +(gi!=null?'the green line (2020 cycle, '+M.date(gi)+', price then '+usd(M.close[gi],0)+') '+num(gm,3)+'; ':'')
+    +(bi!=null?'the blue line (2016 cycle, '+M.date(bi)+', price then '+usd(M.close[bi],0)+') '+num(bm,3)+'; ':'')
+    +(gri!=null?'the gray line (2012 cycle, '+M.date(gri)+') '+num(M.mvrv[gri],3)+'. ':'')
+    +'Spread of the three lines <b>'+pct(sp,1)+'</b>; the red line is '+{top:'on top (deviating upward)',bottom:'at the bottom (deviating downward)',mid:'between the green and blue lines'}[pos]
+    +(pos!=='mid'?', and has been '+(pos==='top'?'on top':'at the bottom')+' for '+streak+' days in a row (since '+dd(n-streak+1)+')':'')+'. The largest spread so far this cycle was '+pct(spMax,1)+' ('+dd(spMaxD)+', D'+spMaxD+').';
+  // 5.2
+  var rel=function(cc,nm){ var bD=cc.ev.bLo-cc.hIdx, i0=atD(cc,n); if(i0==null) return nm+' has no data at this D';
+    if(n<bD) return nm+' was still '+(bD-n)+' days from its bottom (D'+bD+'), with another '+pct(1-cc.ev.botLoPrice/M.close[i0],1)+' to fall to its final low';
+    if(n===bD) return nm+' bottomed on exactly this day';
+    return nm+' had bottomed '+(n-bD)+' days earlier (D'+bD+') and was '+sgnPct(M.close[i0]/cc.ev.botLoPrice-1,0)+' off that low by this day'; };
+  var cu=catchUp(n,r), cuTxt=(cu.b!=null?'the blue line first reaches the red line’s level today ('+num(r,2)+') at D'+cu.b+' ('+dd(cu.b)+' on this cycle’s calendar)':'the blue line never reaches the red line’s level today ('+num(r,2)+') before D1150')
+    +(cu.g!=null?', the green line at D'+cu.g+' ('+dd(cu.g)+')':', and the green line doesn’t before D1150 either')+(cu.both!=null?'; both lines are within ±5% of it from D'+cu.both+' ('+dd(cu.both)+')':'');
+  var latestBot=Math.max(g.ev.bLo-g.hIdx, bl.ev.bLo-bl.hIdx);
+  L.p52='At D'+n+': '+rel(bl,'the blue line (2016 cycle)')+'; '+rel(g,'the green line (2020 cycle)')+'. '+(n<latestBot+120?'After this both historical lines start to recover: ':'Looking ahead: ')+cuTxt+'.';
+  // 5.3
+  var w1=Math.min(n+42,Math.min(g.len,bl.len)-1), lo=1e9, hi=0, k; for(d=n; d<=w1; d++){ [g,bl].forEach(function(cc){ var v=M.mvrv[cc.hIdx+d]; if(v<lo) lo=v; if(v>hi) hi=v; }); }
+  var pLo=lo*rp, pHi=hi*rp;
+  L.p53a=(w1>n?'Scaled by today’s RP ('+usd(rp,0)+'), the two historical lines’ valuations over D'+n+'–D'+w1+' (the next ~6 weeks) correspond to '+usd(pLo,0)+'–'+usd(pHi,0)+', i.e. '+sgnPct(pLo/c-1,0)+' to '+sgnPct(pHi/c-1,0)+' from here. '
+    +(hi<1?'Both historical lines are below 1 here, so this path means price falling below RP'+(minMv>=1?', which would be this cycle’s first MVRV &lt; 1':'')+'.':(lo<1?'Part of that range is below 1, i.e. price below RP.':'')):'The historical lines don’t have enough data after this D.');
+  L.p53b='The red line stays near today’s level while the historical lines rise to meet it: '+cuTxt+'. That amounts to saying this bear market already ended on '+M.date(e.bLo)+' (no new low after it) and was much shallower than history.';
+  var tD=e.tHi-live.hIdx;
+  L.p53t='this cycle’s top (D'+tD+') landed squarely between the historical tops at D526 and D548, so the timing has held so far; it has been '+(i-e.tHi)+' days since the top, while historical top-to-bottom spans were 363–410 days; '+(an.n?'the '+an.n+' analog dates in table 5 that have not yet passed fall between '+fmtD(an.a)+' and '+fmtD(an.b)+'. ':'all 12 analog dates in table 5 have passed. ');
+  var rr=rpReset(live);
+  L.p53rp='this cycle it has fallen '+(rr.chg>-0.15?'only ':'')+pct(-rr.chg,1)+' so far (from '+usd(rpAt(rr.pk),0)+' on '+M.date(rr.pk)+' to '+usd(rpAt(rr.tr),0)+' on '+M.date(rr.tr)+'). ';
+  L.p53w='Over the coming months, three things on this chart will help tell A from B / C: first, whether price breaks this cycle’s low of '+usd(e.botLoPrice,0)+(an.n?' within the window '+fmtD(an.a)+' to '+fmtD(an.b):'')+'; second, whether MVRV moves toward 1 (the price at MVRV = 1 is RP, about '+usdK(rp)+' today); third, whether RP itself keeps falling as in the previous three cycles (a 20% drop from its peak would put it near '+usdK(rpAt(rr.pk)*0.8)+'). These are things to watch, not price targets, and certainly not trading advice.';
+  // 记分卡：第 29–33 个月
+  var mc=monthCount(live,28,33,function(v){return v<1;});
+  L.sc2933=mc.n?('this cycle '+(mc.n<mc.total?mc.n+' of the window’s '+mc.total+' days have passed':'the window is over')+', with a minimum MVRV of '+num(mc.min,2)+' and '+(mc.k?mc.k+' days below 1':'not a single day below 1')):'this cycle hasn’t reached the window yet';
+  L.sc2933v=mc.k?('history ✓ / this cycle ◐ ('+mc.k+' days &lt;1)'):('history ✓ / this cycle ✗'+(mc.n<mc.total?' (so far)':''));
+  // 8.1
+  var ta=todayAnalogs(), keys=['byD','byTop','byNext','byFrac'], mnames={byD:'days after halving',byTop:'days after top',byNext:'days to next halving',byFrac:'cycle progress'}, near=0, exc=[], mv=[], dds=[];
+  ta.rows.forEach(function(row){ keys.forEach(function(kk){ var x=row[kk]; if(Math.abs(x.rel)<=45) near++; else exc.push(row.c.id+' cycle by '+mnames[kk]+' ('+relBot(x.rel)+')'); mv.push(x.mvrv); dds.push(x.dd); }); });
+  mv.sort(function(a,b){return a-b;}); dds.sort(function(a,b){return a-b;}); var N=mv.length, med=N%2?mv[(N-1)/2]:(mv[N/2-1]+mv[N/2])/2;
+  L.p81a='As of '+M.lastDate+': '+near+' of the '+N+' aligned points were within 45 days of that cycle’s bottom'+(exc.length?'; the exceptions are '+exc.join(', '):'')+'. '
+    +(near>=9?'In other words, <b>on timing alone, this cycle is standing right in the historical “bottom window”</b>.':(near>=5?'On timing, this cycle partly overlaps the historical bottom window right now.':'On timing, this cycle is no longer in the historical bottom window.'));
+  L.p81b=(r>mv[N-1]?'But the valuations don’t match at all: ':'On valuation: ')+'those '+N+' points had MVRV '+num(mv[0],2)+'–'+num(mv[N-1],2)+' (median about '+num(med,2)+') and were '+pct(dds[0],0)+' to '+pct(dds[N-1],0)+' from their highs; today this cycle has MVRV '+num(r,2)+', is '+pct(M.dd[i],1)+' from its high and '+pct(Math.abs(c/e.botLoPrice-1),0)+(c>=e.botLoPrice?' above':' below')+' its low so far. '+(r>mv[N-1]?'In the language of section 3.4, the red line is “deviating upward”, and by a lot.':'');
+  // 8.3
+  var tr=triggerRows(), all=[]; tr.forEach(function(x){ all.push(x.byD,x.byTop,x.byNext,x.byFrac); }); all.sort(function(a,b){return a-b;});
+  var tb=tr.map(function(x){return x.toBot;}), tbTxt=Math.min.apply(null,tb)+'–'+Math.max.apply(null,tb);
+  if(ts.n) L.p83='As of '+M.lastDate+': '+(all.length-ts.n)+' of the '+all.length+' dates have passed'+(ts.n===1?'; the one still ahead is '+fmtD(ts.a).slice(5)+' ('+fmtDiff(ts.a)+')':'; the ones still ahead are '+ts.all.map(function(ms){return fmtD(ms).slice(5);}).join(', ')+' (the nearest '+fmtDiff(ts.a)+', the latest '+fmtDiff(ts.b)+')')+'; add the '+tbTxt+' days from “straw” to bottom and the matching bottom analogs (table 5) '+(an.n?'are '+fmtD(an.a)+' to '+fmtD(an.b):'have all passed')+'. <b>If this logic holds, this cycle’s black-swan window runs from now to around '+fmtD(ts.b)+'.</b>';
+  else L.p83='As of '+M.lastDate+': all '+all.length+' dates have passed. '+(lowMs>all[all.length-1]?'A new cycle low has appeared since then ('+M.date(e.bLo)+', '+usd(e.botLoPrice,0)+').':'Price did not break this cycle’s low of '+usd(e.botLoPrice,0)+' in that time: by this logic, this cycle’s “last straw” either came early (see 8.4, point 4) or the cycle has changed shape.');
+  // 8.4
+  L.p84m=r>=1?('Today this cycle’s MVRV is '+num(r,2)+': the average holder is still about '+pct(r-1,0)+' in profit. '):('Today this cycle’s MVRV is '+num(r,2)+': the average holder is about '+pct(1-r,0)+' under water. ');
+  // 8.5
+  var rec=recoverRows(), lv=rec[rec.length-1], hist=rec.filter(function(x){return x.c.complete&&x.sameK;});
+  var sames=hist.map(function(x){return x.sameK.chg;}), sTxt=hist.map(function(x){return sgnPct(x.sameK.chg,0);}).join(', ');
+  var mag=(sames.length&&lv.now)?(lv.now.chg>Math.max.apply(null,sames)+0.15?'stronger than all three earlier cycles':(lv.now.chg<Math.min.apply(null,sames)-0.15?'weaker than all three earlier cycles':'about the same magnitude')):'';
+  L.p85a=(lv.now?'by day '+lv.k+' after the low it had rebounded '+sgnPct(lv.now.chg,0)+(sTxt?' (the previous three cycles at the same day count: '+sTxt+'; '+mag+')':'')+'; ':'')
+    +(minMv>=1?'this cycle’s MVRV has never fallen below 1 (low '+num(minMv,2)+', '+M.date(e.mMin)+')':'this cycle’s MVRV got as low as '+num(minMv,2)+' ('+M.date(e.mMin)+')')+'; in August 2026 both ETF flows and holders of 100+ BTC were net buyers (observed at the time of writing).';
+  L.p85b=(ts.n?ts.n+' of the 12 “last straw” analog dates '+(ts.n===1?'is':'are')+' still ahead ('+fmtD(ts.a)+(ts.b!==ts.a?' to '+fmtD(ts.b):'')+')':'the “last straw” analog dates have all passed, so this piece of evidence no longer holds')
+    +'; in this bear market RP '+(rr.chg>-0.15?'has fallen only '+pct(-rr.chg,1)+' from its peak, versus about 20% in each of the previous three, suggesting the large-scale capitulation hasn’t happened yet (section 5.3)':'has already fallen '+pct(-rr.chg,1)+' from its peak, close to the ~20% of the previous three cycles')+'; at the time of writing, macro conditions were tightening (a Fed hike in 2026-09, the 10-year Treasury yield at 5.3%).';
+  var allA=analogAll(), maxA=allA[allA.length-1];
+  L.p85w3=maxA>lastMs?('No break of that low by the latest analog date in table 5 ('+fmtD(maxA)+', '+fmtDiff(maxA)+'): the window has passed, Jun 30 can be treated as this cycle’s FTX, and scenario A takes over.')
+    :('The latest analog date in table 5 ('+fmtD(maxA)+') has passed; '+(lowMs>maxA?'a new low has been made since ('+M.date(e.bLo)+'), so scenario B has happened.':'there was no break of this cycle’s low in the meantime: the window has passed, Jun 30 can be treated as this cycle’s FTX, and scenario A takes over.'));
+  // 8.6
+  var sc=scenRows(), R2={}; sc.rows.forEach(function(x){ R2[x.k]=x; });
+  var ym=function(ms){ return fmtD(ms).slice(0,7); }, yr=function(ms){ return new Date(ms).getUTCFullYear(); }, rng=function(a){ return ym(a[0])===ym(a[1])?ym(a[0]):(ym(a[0])+' to '+ym(a[1])); };
+  var t1=R2.top1.A, t2=R2.top2.A, gapM=Math.round(((t2[0]+t2[1])/2-(t1[0]+t1[1])/2)/DAY/30.4);
+  var h86='<p>As of '+M.lastDate+', if '+M.date(sc.lb)+' was the bottom (scenario A):</p><ul>'
+    +'<li>back to the previous high: '+rng(R2.ath.A)+' by day count, '+rng(R2.need.A)+' by gain (this cycle only needs '+sc.need.toFixed(2)+'× from its low);</li>'
+    +'<li>next cycle top: '+rng(t1)+' by “bottom + '+sc.dTop[0]+'–'+sc.dTop[1]+' days”, '+rng(t2)+' by “D'+sc.topD[0]+'–D'+sc.topD[1]+' after the halving”'+(Math.abs(gapM)>=2?' (the two clocks differ by about '+Math.abs(gapM)+' months)':'')+';</li>'
+    +'<li>bottom to next halving: '+R2.nh.A+' days, '+(R2.nh.A>sc.dNh[1]?(R2.nh.A-sc.dNh[1])+' days more than the longest on record ('+sc.dNh[1]+')':(R2.nh.A<sc.dNh[0]?(sc.dNh[0]-R2.nh.A)+' days fewer than the shortest on record ('+sc.dNh[0]+')':'within the historical range ('+sc.dNh[0]+'–'+sc.dNh[1]+' days)'))+'.</li></ul>';
+  if(sc.span.n) h86+='<p>If there is one more bottom between '+fmtD(sc.span.a)+' and '+fmtD(sc.span.b)+' (scenario B):</p><ul><li>back to the previous high: '+rng(R2.ath.B)+';</li><li>next cycle top: '+rng(R2.top1.B)+';</li><li>bottom to halving: '+R2.nh.B[0]+'–'+R2.nh.B[1]+' days, '+((R2.nh.B[0]>=sc.dNh[0]-30&&R2.nh.B[1]<=sc.dNh[1]+30)?'consistent with history':'off the historical pattern')+'.</li></ul>';
+  else h86+='<p>All analog dates in table 5 have passed, so scenario B no longer has a matching time window.</p>';
+  L.p86=h86;
+  var years={}; [t1,t2].concat(sc.span.n?[R2.top1.B]:[]).forEach(function(a){ years[yr(a[0])]=1; years[yr(a[1])]=1; }); var ys=Object.keys(years).sort();
+  L.p86c='An interesting contrast: '+(sc.span.n?'<b>scenario B lines up every clock, while scenario A means this cycle’s clock has changed shape</b>':'<b>if scenario A holds, this cycle’s clock has changed shape</b>')+' (the bear market lasted only '+(e.bLo-e.tHi)+' days, versus 363–410 in the previous three). If you firmly believe in the cycle clock, '+(sc.span.n?'B is the self-consistent reading. ':'you have to accept that this bear market was unusually short. ')
+    +'If you trust the data itself more, A is the simpler explanation: the swings shrink every cycle, with peak MVRV falling from 5.88, 4.72 and 3.96 to '+num(M.mvrv[e.mMax],2)+' and bottom MVRV rising from 0.56, 0.69 and 0.75 to '+num(minMv,2)+' so far this cycle. Either way, the next big top lands in '+(ys.length===1?ys[0]:ys[0]+'–'+ys[ys.length-1])+'.';
+  return L;
+}
+function fillLive(){ var L=liveText(); Array.prototype.forEach.call(document.querySelectorAll('[data-live]'),function(el){ var k=el.getAttribute('data-live'); if(L[k]!=null) el.innerHTML=L[k]; }); }
+function renderGuideTables(){
+  // 周期结构
+  var h='<tr><th>Cycle</th><th class="num">Length</th><th>Top (intraday high)<br><span class="sm">price · D · % of cycle</span></th><th>Bottom (intraday low)<br><span class="sm">price · D · % of cycle</span></th><th class="num">Top → bottom</th><th class="num">Bottom →<br>next halving</th><th class="num">MVRV<br>peak / low</th><th class="num">Max<br>drawdown</th></tr>';
+  M.cycles.forEach(function(c){ var e=c.ev, L=cycLen(c);
+    h+='<tr><td class="nw">'+idKey(c.id)+c.id+(c.complete?'':' (current)')+'</td><td class="num nw">'+L+' d'+(c.complete?'':'<br><span class="sm">est.</span>')+'</td>'
+     +'<td class="nw">'+M.date(e.tHi)+'<br><span class="sm">'+usd(e.topHiPrice,0)+' · D'+(e.tHi-c.hIdx)+' · '+((e.tHi-c.hIdx)/L*100).toFixed(1)+'%</span></td>'
+     +'<td class="nw">'+M.date(e.bLo)+(c.complete?'':'<span class="sm"> (so far)</span>')+'<br><span class="sm">'+usd(e.botLoPrice,0)+' · D'+(e.bLo-c.hIdx)+' · '+((e.bLo-c.hIdx)/L*100).toFixed(1)+'%</span></td>'
+     +'<td class="num nw">'+(e.bLo-e.tHi)+' d'+(c.complete?'':'<br><span class="sm">so far</span>')+'</td>'
+     +'<td class="num nw">'+(c.complete?(M.cycles[c.k+1].hIdx-e.bLo)+' d':'—')+'</td>'
+     +'<td class="num nw">'+num(M.mvrv[e.mMax],2)+' / '+num(M.mvrv[e.mMin],2)+'</td>'
+     +'<td class="num nw">'+pct(e.botLoPrice/e.topHiPrice-1,1)+'</td></tr>'; });
+  if($('g-t-cycles')) $('g-t-cycles').innerHTML=h;
+  // 回测：两个可回测视角，固定 10% 阈值
+  var rows=backtestBands('2020',0.10).concat(backtestBands('2024',0.10));
+  var b='<tr><th>Red line</th><th>Convergence (red-line dates)<br><span class="sm">D · red-line close</span></th><th class="num">Next<br>90 days</th><th class="num">Next<br>180 days</th><th class="num">Max drawdown<br>within 180 d</th><th>The two historical lines<br>MVRV change (180 d)</th><th>Result</th></tr>';
+  rows.forEach(function(r){
+    var res=r.f180==null?'<span class="sm">under 180 days</span>':(r.f180>0?'▲ up':'▼ down');
+    var same=(r.f180!=null&&r.havg!=null)?(((r.f180>0)===(r.havg>0))?'same direction as history':'opposite to history'):'';
+    b+='<tr><td class="nw">'+idKey(r.persp)+r.persp+' cycle</td><td class="nw">'+r.d0+' → '+r.d1+'<br><span class="sm">D'+r.a+'–'+r.b+' · '+usdK(r.lo)+'–'+usdK(r.hi)+'</span></td><td class="num nw">'+sgnPct(r.f90)+'</td><td class="num nw"><b>'+sgnPct(r.f180)+'</b></td><td class="num nw">'+sgnPct(r.dd180)+'</td><td class="nw">'+r.hist.map(function(x){ return x.id+' '+sgnPct(x.chg); }).join('<br>')+'</td><td class="verdict">'+res+(same?'<br><span class="sm">'+same+'</span>':'')+'</td></tr>'; });
+  if($('g-t-bt')) $('g-t-bt').innerHTML=b;
+  // 本轮哪里不像历史
+  var cyc=M.cycles, rowsC=[
+    ['MVRV peak', function(c){ return num(M.mvrv[c.ev.mMax],2); }],
+    ['MVRV low', function(c){ return num(M.mvrv[c.ev.mMin],2)+(c.complete?'':'<span class="sm"> (so far)</span>'); }],
+    ['Max drawdown, top to bottom (intraday)', function(c){ return pct(c.ev.botLoPrice/c.ev.topHiPrice-1,1); }],
+    ['Bottom vs. that day’s RP', function(c){ return sgnPct(c.ev.botLoPrice/rpAt(c.ev.bLo)-1,1); }],
+    ['RP drop from its peak in the bear market (cost reset)', function(c){ var r=rpReset(c); return pct(r.chg,1)+'<br><span class="sm">'+M.date(r.pk)+' → '+M.date(r.tr)+'</span>'; }],
+    ['Days with MVRV&gt;3 in months 11–12', function(c){ var m=monthCount(c,10,12,function(v){return v>3;}); return m.k+' / '+m.n+(m.n<m.total?'<span class="sm"> (so far)</span>':''); }],
+    ['Days with MVRV&lt;1 in months 29–33', function(c){ var m=monthCount(c,28,33,function(v){return v<1;}); return m.n?(m.k+' / '+m.n+(m.n<m.total?'<span class="sm"> (so far)</span>':'')):'not yet'; }],
+    ['Top: day after halving', function(c){ return 'D'+(c.ev.tHi-c.hIdx); }],
+    ['Days from top to bottom', function(c){ return (c.ev.bLo-c.ev.tHi)+' d'+(c.complete?'':'<span class="sm"> (low so far)</span>'); }]
+  ];
+  var t='<tr><th>Metric</th>'+cyc.map(function(c){ return '<th class="num nw">'+idKey(c.id)+c.id+(c.complete?'':' current')+'</th>'; }).join('')+'</tr>';
+  rowsC.forEach(function(r){ t+='<tr><td>'+r[0]+'</td>'+cyc.map(function(c){ return '<td class="num nw">'+r[1](c)+'</td>'; }).join('')+'</tr>'; });
+  if($('g-t-cmp')) $('g-t-cmp').innerHTML=t;
+  var nh=$('g-nh'); if(nh) nh.textContent='≈ '+fmtD(nextHalvingMs())+' (est. from this cycle’s average block time)';
+  // 第 8 节（黑天鹅 / 今天 / 修复）
+  [['g-t-today',htmlToday],['g-t-swan',htmlSwan],['g-t-trig',htmlTrig],['g-t-crash',htmlCrash],['g-t-rec',htmlRec],['g-t-scen',htmlScen]].forEach(function(x){ var el=$(x[0]); if(el) el.innerHTML=x[1](true); });
+  var lv=$('g-levels'); if(lv) lv.innerHTML='<span class="livechip">Live</span> At today’s ('+M.lastDate+') RP of '+usd(M.rpNow,0)+': '+htmlLevels();
+  fillLive();
+}
+function gChart1(){ // 每轮 MVRV 峰值 / 谷值
+  var ch=gInit('g-c1'); if(!ch) return; var t=T();
+  var cats=M.cycles.map(function(c){ return c.id+' cycle'+(c.complete?'':' (so far)'); });
+  var mk=function(kind){ return M.cycles.map(function(c){ var i=kind==='max'?c.ev.mMax:c.ev.mMin; return {value:M.mvrv[i],date:M.date(i),itemStyle:{color:idColor(c.id),borderColor:t.surface,borderWidth:2}}; }); };
+  var lab=function(pos){ return {show:true,position:pos,distance:6,color:t.ink,fontSize:12,formatter:function(p){ return (+p.value).toFixed(2); }}; };
+  var opt=gBase();
+  opt.grid={left:50,right:24,top:42,bottom:30};
+  opt.legend={top:8,right:16,data:['Peak ▲','Low ▼'],textStyle:{color:t.ink2,fontSize:12},itemWidth:18,itemHeight:4};
+  opt.tooltip=Object.assign(gTip(),{trigger:'item',formatter:function(p){ return esc(p.seriesName)+' · '+esc(p.name)+'<br>'+p.data.date+': MVRV <b>'+(+p.value).toFixed(3)+'</b>'; }});
+  opt.xAxis={type:'category',data:cats,axisLine:{lineStyle:{color:t.axis}},axisTick:{show:false},axisLabel:{color:t.ink2,fontSize:12}};
+  opt.yAxis={type:'log',logBase:2,min:0.25,max:8,name:'MVRV (log)',nameTextStyle:{color:t.muted,fontSize:11,align:'left'},axisLabel:{color:t.muted,fontSize:11},splitLine:{lineStyle:{color:t.grid}}};
+  opt.series=[
+    {name:'Peak ▲',type:'line',data:mk('max'),symbol:'triangle',symbolSize:14,lineStyle:{color:t.axis,width:1.5},itemStyle:{color:t.muted},label:lab('top'),emphasis:{disabled:true},
+      markLine:{silent:true,symbol:'none',lineStyle:{color:t.muted,type:[5,4],width:1},label:{position:'insideEndTop',color:t.ink2,fontSize:11,formatter:function(p){return p.name;}},data:[{yAxis:3,name:'MVRV = 3'},{yAxis:1,name:'MVRV = 1'}]}},
+    {name:'Low ▼',type:'line',data:mk('min'),symbol:DOWN,symbolSize:13,lineStyle:{color:t.axis,width:1.5},itemStyle:{color:t.muted},label:lab('bottom'),emphasis:{disabled:true}}
+  ];
+  ch.setOption(opt,true);
+}
+function gChart2(){ // 四轮时间轴
+  var ch=gInit('g-c2'); if(!ch) return; var t=T(), narrow=$('g-c2').clientWidth<560;
+  var live=M.cycles[M.cycles.length-1], nowD=M.lastIdx-live.hIdx, cats=M.cycles.map(function(c){ return c.id+' cycle'; });
+  var spans=[], zones=[], tops=[], bots=[];
+  M.cycles.forEach(function(c,yi){ spans.push([yi,0,cycLen(c)]); c.ev.zones.forEach(function(z){ zones.push([yi,z.a-c.hIdx,z.b-c.hIdx]); });
+    tops.push({value:[c.ev.tHi-c.hIdx,yi],itemStyle:{color:idColor(c.id),borderColor:t.surface,borderWidth:1.5},lab:'Top D'+(c.ev.tHi-c.hIdx),date:M.date(c.ev.tHi),price:c.ev.topHiPrice,cy:cats[yi]});
+    bots.push({value:[c.ev.bLo-c.hIdx,yi],itemStyle:{color:idColor(c.id),borderColor:t.surface,borderWidth:1.5},lab:(c.complete?'Bottom D':'Low D')+(c.ev.bLo-c.hIdx),date:M.date(c.ev.bLo),price:c.ev.botLoPrice,cy:cats[yi]}); });
+  var rect=function(fill,hf){ return function(params,api){ var yi=api.value(0), s=api.coord([api.value(1),yi]), e=api.coord([api.value(2),yi]), hh=api.size([0,1])[1]*hf; return {type:'rect',shape:{x:s[0],y:s[1]-hh/2,width:Math.max(1.5,e[0]-s[0]),height:hh},style:{fill:fill}}; }; };
+  var opt=gBase();
+  opt.grid={left:narrow?54:62,right:20,top:22,bottom:40};
+  opt.tooltip=Object.assign(gTip(),{trigger:'item',formatter:function(p){ var d=p.data; if(!d||!d.date) return ''; return esc(d.cy)+' · '+esc(d.lab)+'<br>'+d.date+' · '+usd(d.price,0); }});
+  opt.xAxis={type:'value',min:0,max:1500,interval:narrow?500:250,name:'D (days after halving)',nameLocation:'middle',nameGap:26,nameTextStyle:{color:t.muted,fontSize:11},axisLabel:{color:t.muted,fontSize:11},splitLine:{lineStyle:{color:t.grid}}};
+  opt.yAxis={type:'category',data:cats,inverse:true,axisLine:{lineStyle:{color:t.axis}},axisTick:{show:false},axisLabel:{color:t.ink2,fontSize:12}};
+  opt.series=[
+    {type:'custom',renderItem:rect(isDark()?'#2c2c2a':'#e9e8e2',0.26),data:spans,encode:{x:[1,2],y:0},silent:true,z:1},
+    {type:'custom',renderItem:rect(isDark()?'rgba(12,163,12,.45)':'rgba(0,131,0,.30)',0.26),data:zones,encode:{x:[1,2],y:0},silent:true,z:2},
+    {type:'scatter',data:tops,symbol:'triangle',symbolSize:13,z:4,label:{show:true,position:'top',distance:3,color:t.ink2,fontSize:11,formatter:function(p){return p.data.lab;}}},
+    {type:'scatter',data:bots,symbol:DOWN,symbolSize:12,z:4,label:{show:true,position:'bottom',distance:3,color:t.ink2,fontSize:11,formatter:function(p){return p.data.lab;}},
+      markLine:{silent:true,symbol:'none',lineStyle:{color:t.ink,width:1,type:'solid',opacity:.6},label:{position:'end',color:t.ink,fontSize:11,formatter:'Today D'+nowD},data:[{xAxis:nowD}]}}
+  ];
+  ch.setOption(opt,true);
+}
+function gChart3(){ // 成本重置：熊市里 RP 相对峰值
+  var ch=gInit('g-c3'); if(!ch) return; var t=T(), narrow=$('g-c3').clientWidth<560, series=[];
+  M.cycles.forEach(function(c){ var r=rpReset(c), e=c.ev, pkv=rpAt(r.pk), data=[], end=Math.min(M.lastIdx,e.tHi+560);
+    for(var i=e.tHi;i<=end;i++) data.push([i-e.tHi,rpAt(i)/pkv]);
+    series.push({type:'line',name:c.id+' cycle'+(c.complete?'':' (current)'),data:data,showSymbol:false,lineStyle:{width:c.complete?1.8:2.6,color:idColor(c.id)},itemStyle:{color:idColor(c.id)},emphasis:{disabled:true},z:c.complete?3:5,
+      endLabel:{show:!narrow,formatter:c.id+' '+pct(r.chg,1),color:t.ink2,fontSize:11,backgroundColor:t.surface,padding:[1,3],borderRadius:3},labelLayout:{moveOverlap:'shiftY'}});
+  });
+  series.push({type:'line',name:'Reference',data:[],silent:true,markLine:{silent:true,symbol:'none',lineStyle:{color:t.muted,type:[5,4],width:1},label:{position:'insideStartTop',color:t.ink2,fontSize:11,formatter:'20% below peak'},data:[{yAxis:0.8}]}});
+  var opt=gBase();
+  opt.grid={left:52,right:narrow?16:100,top:44,bottom:40};
+  opt.legend={top:8,right:16,data:M.cycles.map(function(c){return c.id+' cycle'+(c.complete?'':' (current)');}),textStyle:{color:t.ink2,fontSize:12},itemWidth:18,itemHeight:4};
+  opt.tooltip=Object.assign(gTip(),{trigger:'axis',formatter:function(ps){ ps=ps.filter(function(p){return p.seriesName!=='Reference';}); if(!ps.length) return ''; return 'Day '+ps[0].value[0]+' after the price top<br>'+ps.map(function(p){ return lineKey(p.color)+esc(p.seriesName)+': RP at <b>'+pct(p.value[1],1)+'</b> of its peak'; }).join('<br>'); }});
+  opt.xAxis={type:'value',min:0,max:560,interval:narrow?140:70,name:'Days after the price top (intraday high)',nameLocation:'middle',nameGap:26,nameTextStyle:{color:t.muted,fontSize:11},axisLabel:{color:t.muted,fontSize:11},splitLine:{lineStyle:{color:t.grid}}};
+  opt.yAxis={type:'value',min:0.5,max:1.05,interval:0.1,name:'RP ÷ its peak in this bear market',nameTextStyle:{color:t.muted,fontSize:11,align:'left'},axisLabel:{color:t.muted,fontSize:11,formatter:function(v){return Math.round(v*100)+'%';}},splitLine:{lineStyle:{color:t.grid}}};
+  opt.series=series;
+  ch.setOption(opt,true);
+}
+function gChart4(){ // 回测散点
+  var ch=gInit('g-c4'); if(!ch) return; var t=T();
+  var rows=backtestBands('2020',0.10).concat(backtestBands('2024',0.10)).filter(function(r){return r.f180!=null;});
+  var mk=function(persp){ return rows.filter(function(r){return r.persp===persp;}).map(function(r){ return {value:[r.b,r.f180],symbol:r.f180>0?'triangle':DOWN,r:r}; }); };
+  var hist=M.cycles.filter(function(c){return c.complete;}).slice(-2);
+  var za=Math.min.apply(null,hist.map(function(c){return c.ev.tHi-c.hIdx;})), zb=Math.max.apply(null,hist.map(function(c){return c.ev.bLo-c.hIdx;}));
+  var lbl={show:true,position:'right',distance:5,color:t.ink2,fontSize:10.5,formatter:function(p){ return p.data.r.d0.slice(0,7); }};
+  var opt=gBase();
+  opt.grid={left:56,right:28,top:44,bottom:40};
+  opt.legend={top:8,right:16,data:['2020 cycle as red line','Current cycle as red line'],textStyle:{color:t.ink2,fontSize:12}};
+  opt.tooltip=Object.assign(gTip(),{trigger:'item',formatter:function(p){ var r=p.data.r; return r.d0+' → '+r.d1+' (D'+r.a+'–'+r.b+')<br>Red-line close '+usd(r.lo,0)+'–'+usd(r.hi,0)+'<br>Next 180 days: <b>'+sgnPct(r.f180)+'</b>; historical lines over the same period: '+r.hist.map(function(x){return x.id+' '+sgnPct(x.chg);}).join(', '); }});
+  opt.xAxis={type:'value',min:0,max:1440,interval:180,name:'D at the end of the convergence (days after halving)',nameLocation:'middle',nameGap:26,nameTextStyle:{color:t.muted,fontSize:11},axisLabel:{color:t.muted,fontSize:11},splitLine:{lineStyle:{color:t.grid}}};
+  opt.yAxis={type:'value',name:'Red-line price change over the next 180 days',nameTextStyle:{color:t.muted,fontSize:11,align:'left'},axisLabel:{color:t.muted,fontSize:11,formatter:function(v){return (v>0?'+':'')+Math.round(v*100)+'%';}},splitLine:{lineStyle:{color:t.grid}}};
+  opt.series=[
+    {name:'2020 cycle as red line',type:'scatter',data:mk('2020'),symbolSize:13,itemStyle:{color:idColor('2020'),borderColor:t.surface,borderWidth:1.5},label:lbl,labelLayout:{hideOverlap:true},z:4,
+      markArea:{silent:true,itemStyle:{color:isDark()?'rgba(255,255,255,.06)':'rgba(11,11,11,.05)'},label:{position:'insideTop',color:t.ink2,fontSize:11},data:[[{xAxis:za,name:'Historical top → bottom stretch D'+za+'–D'+zb},{xAxis:zb}]]},
+      markLine:{silent:true,symbol:'none',lineStyle:{color:t.axis,width:1,type:'solid'},label:{show:false},data:[{yAxis:0}]}},
+    {name:'Current cycle as red line',type:'scatter',data:mk('2024'),symbolSize:13,itemStyle:{color:idColor('2024'),borderColor:t.surface,borderWidth:1.5},label:lbl,labelLayout:{hideOverlap:true},z:5}
+  ];
+  ch.setOption(opt,true);
+}
+function gChart5(){ // 今天：红线 vs 历史线（D700–D1150）
+  var ch=gInit('g-c5'); if(!ch) return; var t=T(), narrow=$('g-c5').clientWidth<560;
+  var live=M.cycles[3], g=M.cycles[2], bl=M.cycles[1], gr=M.cycles[0], nowD=M.lastIdx-live.hIdx, rNow=M.mvrv[M.lastIdx], rp=M.rpNow, D0=700, D1=1150;
+  var path=function(c,a,b){ var d=[]; for(var n=a;n<=b;n++){ var i=c.hIdx+n; if(i>M.lastIdx) break; d.push([n,M.mvrv[i]]); } return d; };
+  var defs=[[gr,'Gray · 2012',1.2,0.6],[bl,'Blue · 2016',1.8,1],[g,'Green · 2020',1.8,1],[live,'Red · current',2.6,1]];
+  var sers=defs.map(function(x){ return {type:'line',name:x[1],data:path(x[0],D0,x[0]===live?nowD:D1),showSymbol:false,lineStyle:{width:x[2],color:idColor(x[0].id),opacity:x[3]},itemStyle:{color:idColor(x[0].id)},emphasis:{disabled:true},z:x[0]===live?5:3}; });
+  var first=function(test){ for(var n=nowD+1;n<=D1;n++){ if(test(n)) return n; } return null; };
+  var nb=first(function(n){ return M.mvrv[bl.hIdx+n]>=rNow; }), ng=first(function(n){ return M.mvrv[g.hIdx+n]>=rNow; }), n5=first(function(n){ return Math.min(M.mvrv[g.hIdx+n],M.mvrv[bl.hIdx+n])>=rNow*0.95; });
+  var pts=[]; if(nb!=null) pts.push({value:[nb,M.mvrv[bl.hIdx+nb]],c:'2016',pos:'left',lab:'Blue catches up D'+nb+'\n'+fmtD(live.hMs+nb*DAY)});
+  if(ng!=null) pts.push({value:[ng,M.mvrv[g.hIdx+ng]],c:'2020',pos:'bottom',lab:'Green catches up D'+ng+'\n'+fmtD(live.hMs+ng*DAY)});
+  else if(n5!=null) pts.push({value:[n5,M.mvrv[g.hIdx+n5]],c:'2020',pos:'bottom',lab:'Both within ±5% D'+n5+'\n'+fmtD(live.hMs+n5*DAY)});
+  var span=analogSpan(), area=span.n?[[{xAxis:Math.round((span.a-live.hMs)/DAY),name:narrow?'Bottom\nanalogs':'Bottom timing\nanalogs'},{xAxis:Math.round((span.b-live.hMs)/DAY)}]]:[];
+  var vl=[{xAxis:bl.ev.bLo-bl.hIdx,lineStyle:{color:idColor('2016'),type:[4,3],width:1.2},label:{position:'insideEndTop',formatter:'2016 bottom D'+(bl.ev.bLo-bl.hIdx)}},
+          {xAxis:g.ev.bLo-g.hIdx,lineStyle:{color:idColor('2020'),type:[4,3],width:1.2},label:{position:'insideEndTop',formatter:'2020 bottom D'+(g.ev.bLo-g.hIdx)}},
+          {xAxis:nowD,lineStyle:{color:t.ink,type:'solid',width:1,opacity:.6},label:{position:'insideStartTop',formatter:'Today D'+nowD}}];
+  if(narrow) vl.forEach(function(v){ v.label.show=false; });
+  sers.push({type:'line',name:'Reference',data:[],silent:true,
+    markArea:{silent:true,itemStyle:{color:t.band},label:{position:'insideBottom',color:t.ink2,fontSize:11,lineHeight:14},data:area},
+    markLine:{silent:true,symbol:'none',label:{position:'end',color:t.ink2,fontSize:11,backgroundColor:t.surface,padding:[1,3],borderRadius:3},data:vl.concat([[{coord:[nowD,rNow],lineStyle:{color:idColor('2024'),type:[6,4],width:1.4},label:{position:'end',formatter:'Red line today '+rNow.toFixed(2),color:t.ink2,show:!narrow}},{coord:[D1,rNow]}]])}});
+  sers.push({type:'scatter',name:'Catch-up points',data:pts.map(function(p){ return {value:p.value,itemStyle:{color:idColor(p.c),borderColor:t.surface,borderWidth:2},lab:p.lab,label:{position:p.pos}}; }),symbolSize:11,z:6,
+    label:{show:!narrow,distance:6,color:t.ink2,fontSize:10.5,lineHeight:13,backgroundColor:t.surface,borderColor:t.grid,borderWidth:1,borderRadius:4,padding:[2,4],formatter:function(p){return p.data.lab;}},tooltip:{show:false}});
+  var opt=gBase();
+  opt.grid={left:44,right:narrow?14:118,top:46,bottom:44};
+  opt.legend={top:8,right:16,data:['Red · current','Green · 2020','Blue · 2016','Gray · 2012'],textStyle:{color:t.ink2,fontSize:12},itemWidth:18,itemHeight:4};
+  opt.tooltip=Object.assign(gTip(),{trigger:'axis',axisPointer:{type:'line',lineStyle:{color:t.muted}},formatter:function(ps){ if(!ps||!ps.length) return ''; var n=Math.round(ps[0].value[0]); var out='This cycle’s calendar '+fmtD(live.hMs+n*DAY)+' (D'+n+')';
+      [[live,'Red · current'],[g,'Green · 2020'],[bl,'Blue · 2016'],[gr,'Gray · 2012']].forEach(function(x){ var c=x[0], i=c.hIdx+n; if(i>M.lastIdx||(c===live&&n>nowD)) return; out+='<br>'+lineKey(idColor(c.id))+x[1]+' '+M.date(i)+': MVRV <b>'+num(M.mvrv[i],3)+'</b>'+(c===live?'':' (scaled '+usd(M.mvrv[i]*rp,0)+')'); });
+      return out; }});
+  opt.xAxis={type:'value',min:D0,max:D1,interval:narrow?150:50,axisLabel:{color:t.muted,fontSize:10.5,hideOverlap:true,formatter:function(v){ return fmtD(live.hMs+v*DAY).slice(2,7)+'\nD'+v; }},splitLine:{lineStyle:{color:t.grid}}};
+  opt.yAxis={type:'value',min:0.5,max:3,interval:0.5,name:narrow?'':'MVRV',nameTextStyle:{color:t.muted,fontSize:11,align:'left'},axisLabel:{color:t.muted,fontSize:11},splitLine:{lineStyle:{color:t.grid}}};
+  opt.series=sers;
+  ch.setOption(opt,true);
+}
+function gChart6(){ // 牛顶后的价格路径 + 暴跌事件
+  var ch=gInit('g-c6'); if(!ch) return; var t=T(), narrow=$('g-c6').clientWidth<560, X1=560, sers=[];
+  var live=M.cycles[M.cycles.length-1], nowT=M.lastIdx-live.ev.tHi;
+  M.cycles.forEach(function(c){ var e=c.ev, top=e.topHiPrice, data=[], end=Math.min(M.lastIdx,e.tHi+X1);
+    for(var i=e.tHi;i<=end;i++) data.push([i-e.tHi,M.close[i]/top-1]);
+    sers.push({type:'line',name:c.id+' cycle'+(c.complete?'':' (current)'),data:data,showSymbol:false,lineStyle:{width:c.complete?1.6:2.6,color:idColor(c.id),opacity:c.id==='2012'?0.85:1},itemStyle:{color:idColor(c.id)},emphasis:{disabled:true},z:c.complete?3:5}); });
+  var sw=swanRows(), last=sw.filter(function(r){return r.s.kind==='last';}), hist=M.cycles.filter(function(c){return c.complete;});
+  var a0=Math.min.apply(null,last.map(function(r){return r.aTop;})), b0=Math.max.apply(null,hist.map(function(c){return c.ev.bLo-c.ev.tHi;}));
+  var pts=sw.filter(function(r){ return r.aTop>=0 && r.aTop<=X1; }).map(function(r){ return {value:[r.aTop,M.close[r.i]/r.c.ev.topHiPrice-1],r:r,symbol:r.s.kind==='last'?'diamond':'circle',symbolSize:r.s.kind==='last'?13:9,
+    itemStyle:{color:idColor(r.c.id),borderColor:t.surface,borderWidth:1.5},label:{position:(r.s.short==='6·30'||r.s.short==='Celsius'||r.s.short==='Bitstamp')?'bottom':'top'}}; });
+  sers.push({type:'scatter',name:'Events',data:pts,z:7,label:{show:true,distance:5,color:t.ink,fontSize:10.5,backgroundColor:t.surface,padding:[1,3],borderRadius:3,formatter:function(p){return p.data.r.s.short;}},labelLayout:{hideOverlap:false}});
+  sers.push({type:'line',name:'Reference',data:[],silent:true,
+    markArea:{silent:true,itemStyle:{color:t.band},label:{position:'insideTop',color:t.ink2,fontSize:11,lineHeight:14},data:[[{xAxis:a0,name:narrow?'Straw→bottom':'Previous cycles\nstraw → bottom'},{xAxis:b0}]]},
+    markLine:{silent:true,symbol:'none',lineStyle:{color:t.ink,width:1,type:'solid',opacity:.6},label:{position:'end',color:t.ink,fontSize:11,formatter:'Today · '+nowT+' d after top'},data:[{xAxis:nowT}]}});
+  var opt=gBase();
+  opt.grid={left:50,right:narrow?14:24,top:44,bottom:narrow?96:66};
+  opt.legend={bottom:6,left:'center',data:M.cycles.map(function(c){return c.id+' cycle'+(c.complete?'':' (current)');}),textStyle:{color:t.ink2,fontSize:12},itemWidth:18,itemHeight:4};
+  opt.tooltip=Object.assign(gTip(),{trigger:'axis',axisPointer:{type:'line',lineStyle:{color:t.muted}},formatter:function(ps){ ps=(ps||[]).filter(function(p){return p.seriesType==='line'&&p.seriesName!=='Reference';}); if(!ps.length) return ''; var n=ps[0].value[0];
+    var evs=sw.filter(function(r){ return Math.abs(r.aTop-n)<=3; });
+    return 'Day '+n+' after the top<br>'+ps.map(function(p){ var c=cycById(p.seriesName.slice(0,4)), i=c.ev.tHi+n; return lineKey(p.color)+esc(p.seriesName)+' '+M.date(i)+': <b>'+pct(p.value[1],0)+'</b> from the top · MVRV '+num(M.mvrv[i],2); }).join('<br>')
+      +evs.map(function(r){ return '<br>◆ <b>'+esc(r.s.name)+'</b> ('+r.date+', '+r.aTop+' d after top): that day '+sgnPct(r.d1,1)+', worst within 7 d '+sgnPct(r.dd7,1)+', previous-day MVRV '+num(r.mvPrev,2); }).join(''); }});
+  opt.xAxis={type:'value',min:0,max:X1,interval:narrow?140:70,name:'Days after the top (intraday high)',nameLocation:'middle',nameGap:26,nameTextStyle:{color:t.muted,fontSize:11},axisLabel:{color:t.muted,fontSize:11},splitLine:{lineStyle:{color:t.grid}}};
+  opt.yAxis={type:'value',min:-0.9,max:0,interval:0.1,name:'Close vs. the top',nameTextStyle:{color:t.muted,fontSize:11,align:'left'},axisLabel:{color:t.muted,fontSize:11,formatter:function(v){return Math.round(v*100)+'%';}},splitLine:{lineStyle:{color:t.grid}}};
+  opt.series=sers;
+  ch.setOption(opt,true);
+}
+function gChart7(){ // 熊底后的修复路径
+  var ch=gInit('g-c7'); if(!ch) return; var t=T(), narrow=$('g-c7').clientWidth<560, X1=560, rec=recoverRows(), sers=[], lv=rec[rec.length-1];
+  rec.forEach(function(r){ var data=[], end=Math.min(M.lastIdx,r.b+X1); for(var i=r.b;i<=end;i++) data.push([i-r.b,M.close[i]/r.base]);
+    sers.push({type:'line',name:r.c.id+' cycle'+(r.c.complete?'':' (current)'),data:data,showSymbol:false,lineStyle:{width:r.c.complete?1.6:2.8,color:idColor(r.c.id),opacity:r.c.id==='2012'?0.85:1},itemStyle:{color:idColor(r.c.id)},emphasis:{disabled:true},z:r.c.complete?3:5}); });
+  var pts=[]; rec.forEach(function(r){ if(!r.c.complete) return; var x=r.nh-r.b; if(x<=X1) pts.push({value:[x,M.close[r.nh]/r.base],itemStyle:{color:idColor(r.c.id),borderColor:t.surface,borderWidth:1.5},lab:'Halving',tip:r.c.id+' cycle: next halving on day '+x+' after the bottom ('+M.date(r.nh)+')'});
+    if(r.xNeed!=null&&r.xNeed-r.b<=X1) pts.push({value:[r.xNeed-r.b,M.close[r.xNeed]/r.base],symbol:'circle',symbolSize:8,itemStyle:{color:t.surface,borderColor:idColor(r.c.id),borderWidth:2},lab:'',tip:r.c.id+' cycle: close reached ×'+lv.need.toFixed(2)+' on day '+(r.xNeed-r.b)+' after the bottom ('+M.date(r.xNeed)+')'}); });
+  sers.push({type:'scatter',name:'Milestones',data:pts,symbol:'diamond',symbolSize:12,z:6,label:{show:false}});
+  sers.push({type:'line',name:'Reference',data:[],silent:true,markLine:{silent:true,symbol:'none',label:{color:t.ink2,fontSize:11,backgroundColor:t.surface,padding:[1,3],borderRadius:3},data:[
+    {yAxis:lv.need,lineStyle:{color:idColor(lv.c.id),type:[6,4],width:1.3},label:{position:'insideEndTop',formatter:'This cycle needs ×'+lv.need.toFixed(2)+' to regain the high'}},
+    {xAxis:lv.k,lineStyle:{color:t.ink,type:'solid',width:1,opacity:.6},label:{position:'insideEndTop',formatter:'Today · day '+lv.k}}]}});
+  var opt=gBase();
+  opt.grid={left:46,right:narrow?14:24,top:44,bottom:40};
+  opt.legend={top:8,right:16,data:rec.map(function(r){return r.c.id+' cycle'+(r.c.complete?'':' (current)');}),textStyle:{color:t.ink2,fontSize:12},itemWidth:18,itemHeight:4};
+  opt.tooltip=Object.assign(gTip(),{trigger:'axis',axisPointer:{type:'line',lineStyle:{color:t.muted}},formatter:function(ps){ ps=(ps||[]).filter(function(p){return p.seriesType==='line'&&p.seriesName!=='Reference';}); if(!ps.length) return ''; var n=ps[0].value[0];
+    var near=pts.filter(function(q){ return Math.abs(q.value[0]-n)<=3; });
+    return 'Day '+n+' after the bottom<br>'+ps.map(function(p){ var r=rec.filter(function(x){return x.c.id===p.seriesName.slice(0,4);})[0], i=r.b+n; return lineKey(p.color)+esc(p.seriesName)+' '+M.date(i)+': <b>×'+p.value[1].toFixed(2)+'</b> (close '+usd(M.close[i],M.close[i]<1000?2:0)+')'; }).join('<br>')
+      +near.map(function(q){ return '<br>◆ '+esc(q.tip); }).join(''); }});
+  opt.xAxis={type:'value',min:0,max:X1,interval:narrow?140:70,name:'Days after the bottom (intraday low)',nameLocation:'middle',nameGap:26,nameTextStyle:{color:t.muted,fontSize:11},axisLabel:{color:t.muted,fontSize:11},splitLine:{lineStyle:{color:t.grid}}};
+  opt.yAxis={type:'log',logBase:2,min:1,max:8,name:'Close ÷ bottom price (log)',nameTextStyle:{color:t.muted,fontSize:11,align:'left'},axisLabel:{color:t.muted,fontSize:11,formatter:function(v){return '×'+(+v.toFixed(2));}},splitLine:{lineStyle:{color:t.grid}}};
+  opt.series=sers;
+  ch.setOption(opt,true);
+}
+function renderGuide(){
+  if(!guideOn()) return;
+  buildToc(); renderGuideLive(); renderGuideTables();
+  gChart1(); gChart2(); gChart3(); gChart4(); gChart5(); gChart6(); gChart7();
+  if(printing) Object.keys(gCharts).forEach(function(k){ gCharts[k].resize({width:PRINT_W}); });
+}
+function currentTab(){ var b=document.querySelector('.tabs button[aria-selected="true"]'); return b?b.getAttribute('data-tab'):'overlay'; }
+function selectTab(name){
+  setTabClasses(name);
+  if(name!=='guide') disposeGuide();
+  if(name==='overlay') renderOverlay(true); if(name==='history') renderHistory(); if(name==='tables') renderTables(); if(name==='guide') renderGuide();
+  saveViewSoon();
+}
+function gotoView(persp,a,b){
+  if(S.persp!==persp){ S.persp=persp; S.hidden={}; if(persp==='2020') S.hidden['2024']=true; press('[data-persp]','data-persp',persp); }
+  selectTab('overlay'); renderTables();
+  setTimeout(function(){ zoomOverlay(a,b); var top=$('tab-overlay').getBoundingClientRect().top+(window.scrollY||0)-barH()-8; window.scrollTo({top:Math.max(0,top),behavior:'smooth'}); },40);
+}
+function prepPrint(){
+  if(printing) return; printing={theme:S.theme,tab:currentTab()};
+  document.body.classList.add('print-guide');
+  if(isDark()){ S.theme='light'; applyTheme(); }
+  if(!guideOn()) selectTab('guide'); else renderGuide();
+}
+function endPrint(){
+  if(!printing) return; var p=printing; printing=null;
+  document.body.classList.remove('print-guide');
+  if(S.theme!==p.theme){ S.theme=p.theme; applyTheme(); }
+  if(p.tab!=='guide') selectTab(p.tab); else renderGuide();
+}
+
+/* ---------- export ---------- */
+function download(name, text, mime){ var blob=new Blob([text],{type:mime}), a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name; document.body.appendChild(a); a.click(); setTimeout(function(){ URL.revokeObjectURL(a.href); a.remove(); }, 1500); }
+function exportCsv(){
+  var live=M.cycles[M.cycles.length-1], head=['days_after_halving','current_cycle_date'], len=0; M.cycles.forEach(function(c){ head.push(c.id+'_date',c.id+'_MVRV',c.id+'_close',c.id+'_intraday_high',c.id+'_intraday_low'); len=Math.max(len,c.len); });
+  var lines=[head.join(',')]; for(var n=0;n<len;n++){ var row=[n,fmtD(live.hMs+n*DAY)]; M.cycles.forEach(function(c){ if(n<c.len){ var i=c.hIdx+n; row.push(M.date(i),M.mvrv[i],M.close[i],M.hi[i]==null?'':M.hi[i],M.lo[i]==null?'':M.lo[i]); } else row.push('','','','',''); }); lines.push(row.join(',')); }
+  download('btc_three_lines_halving_aligned_to_'+M.lastDate+'.csv','﻿'+lines.join('\r\n'),'text/csv;charset=utf-8');
+}
+function exportHtml(){
+  var raw2={ meta:Object.assign({},RAW.meta,{last_date:M.lastDate, built_utc:new Date().toISOString().slice(0,19).replace('T',' '), exported_from_page:true}), halvings:RAW.halvings, start:RAW.start, mvrv:M.mvrv, close:M.close, hi:M.hi, lo:M.lo };
+  var clone=document.documentElement.cloneNode(true);
+  clone.removeAttribute('data-theme');
+  var cb=clone.querySelector('body'); if(cb) cb.classList.remove('print-guide');
+  Array.prototype.forEach.call(clone.querySelectorAll('[data-chart]'),function(el){ el.innerHTML=''; el.removeAttribute('_echarts_instance_'); el.removeAttribute('style'); });
+  Array.prototype.forEach.call(clone.querySelectorAll('[data-dyn]'),function(el){ el.innerHTML=''; if(el.id==='est-note') el.setAttribute('style','display:none'); });
+  Array.prototype.forEach.call(clone.querySelectorAll('.panel'),function(el){ el.className='panel'+(el.id==='tab-overlay'?' on':''); });
+  Array.prototype.forEach.call(clone.querySelectorAll('.tabs button'),function(el){ el.setAttribute('aria-selected', el.getAttribute('data-tab')==='overlay'?'true':'false'); });
+  Array.prototype.forEach.call(clone.querySelectorAll('[aria-pressed]'),function(el){ var on=(el.getAttribute('data-persp')==='2024')||(el.getAttribute('data-ylog')==='0')||(el.getAttribute('data-p2')==='dd'); el.setAttribute('aria-pressed',on?'true':'false'); });
+  var btn=clone.querySelector('#btn-update'); if(btn) btn.removeAttribute('disabled');
+  var dcl=clone.querySelector('#ctl-overlay'); if(dcl) dcl.setAttribute('open','');
+  clone.querySelector('#sx-data').textContent=JSON.stringify(raw2);
+  Array.prototype.forEach.call(clone.querySelectorAll('body > a[download], .hlink'),function(el){ el.remove(); });
+  var pop=clone.querySelector('#share-pop'); if(pop) pop.setAttribute('hidden','');
+  var fb=clone.querySelector('#fab-top'); if(fb) fb.className='fab noprint';
+  var ts=clone.querySelector('#toast'); if(ts){ ts.className='toast noprint'; ts.textContent=''; }
+  download('btc_three_lines_EN_data_to_'+M.lastDate+'.html','<!DOCTYPE html>\n'+clone.outerHTML,'text/html;charset=utf-8');
+}
+
+/* ---------- wiring ---------- */
+function renderAll(keepZoom){
+  renderTiles(); renderTables(); renderFoot(); renderEstNote();
+  if($('tab-overlay').classList.contains('on')) renderOverlay(keepZoom); else if(chartO){ captureOverlayZoom(); chartO.dispose(); chartO=null; }
+  if($('tab-history').classList.contains('on')) renderHistory(); else if(chartH){ chartH.dispose(); chartH=null; }
+  if(guideOn()) renderGuide(); else disposeGuide();
+}
+function press(sel,attr,val){ Array.prototype.forEach.call(document.querySelectorAll(sel),function(b){ b.setAttribute('aria-pressed', b.getAttribute(attr)===val?'true':'false'); }); }
+function defaultZoom(){ var live=M.cycles[M.cycles.length-1]; if(S.persp===live.id){ var n=M.lastIdx-live.hIdx; zoomOverlay(0, X_DAYS); } else zoomOverlay(0,X_DAYS); }
+/* ---------- language switch ---------- */
+var PAGE_LANG='en';
+function langAlt(){ var a=$('btn-lang'); if(!a) return ''; var h=a.getAttribute('href')||''; if(!h||h.indexOf('__LANG')>=0) return ''; if(h==='./'&&location.protocol==='file:') h='index.html'; return h; }
+function langPref(){ try{ return localStorage.getItem('sx_lang'); }catch(e){ return null; } }
+function setLangPref(v){ try{ localStorage.setItem('sx_lang',v); }catch(e){} }
+function goLang(e){ var alt=langAlt(); if(!alt) return; if(e) e.preventDefault(); setLangPref(PAGE_LANG==='zh'?'en':'zh');
+  var h=''; try{ h='#'+viewParams(true); }catch(err){ h=location.hash||''; } location.href=alt+h; }
+function langRedirect(){ // a reader who chose the other language before goes straight there (once per tab session)
+  var p=langPref(), alt=langAlt(); if(!p||p===PAGE_LANG||!alt||isSnapshot()) return false;
+  try{ if(sessionStorage.getItem('sx_lang_hop')) return false; sessionStorage.setItem('sx_lang_hop','1'); }catch(e){ return false; }
+  location.replace(alt+(location.hash||'')); return true; }
+function initLang(){ var a=$('btn-lang'), alt=langAlt(); if(!a) return; if(!alt||isSnapshot()){ a.hidden=true; return; }
+  a.addEventListener('click',goLang); var g=$('lang-hint-go'); if(g) g.addEventListener('click',goLang);
+  if(langPref()) return;
+  var L=(navigator.languages&&navigator.languages.length)?navigator.languages:[navigator.language||''];
+  var anyZh=false; for(var i=0;i<L.length;i++){ if(/^zh/i.test(L[i]||'')) anyZh=true; }
+  var show=(PAGE_LANG==='zh')?!anyZh:/^zh/i.test(L[0]||'');
+  var hint=$('lang-hint'); if(show&&hint){ hint.hidden=false; var x=$('lang-hint-x'); if(x) x.addEventListener('click',function(){ hint.hidden=true; setLangPref(PAGE_LANG); }); } }
+function init(){
+  if(langRedirect()) return;
+  applyTheme(); watchHostTheme();
+  if(window.innerWidth<720){ var dct=$('ctl-overlay'); if(dct) dct.removeAttribute('open'); }
+  var dc=$('ctl-overlay'); if(dc) dc.addEventListener('toggle',function(){ if($('tab-overlay').classList.contains('on')) renderOverlay(true); });
+  M=buildModel(RAW, lsGet(LS_DELTA));
+  $('ck-auto').checked=S.auto;
+  var HV=parseHashView(), V=lsGet(LS_VIEW);
+  if(HV && !HV.onlySec){ applySavedView(HV); } else { applySavedView(V); if(HV && HV.onlySec) setTabClasses(HV.tab); }
+  renderAll(false);
+  if(isSnapshot()){ document.body.classList.add('ed-snap'); S.auto=false;
+    var live0=(RAW.meta.site&&RAW.meta.site.live_url)||'';
+    $('n-snap').innerHTML='This is a <b>snapshot</b>: the data is fixed at '+esc(RAW.meta.last_date)+' and does not update; online updates, saving, export and share links are not available here. '+(live0?'The live version, which updates every time it opens, is here: <a href="'+esc(live0)+'" target="_blank" rel="noopener">'+esc(live0)+'</a>':'');
+    setStatus('','Snapshot · data through <b>'+M.lastDate+'</b>'+(live0?' · <a href="'+esc(live0)+'" target="_blank" rel="noopener">open the live version</a>':'')); }
+  else setStatus('',describeData());
+  initLang();
+  // tabs
+  Array.prototype.forEach.call(document.querySelectorAll('.tabs button'),function(b){ b.addEventListener('click',function(){
+    var from=currentTab(), to=b.getAttribute('data-tab'), y=window.scrollY||0; if(from===to) return;
+    TABSCROLL[from]=y; selectTab(to);
+    var panelTop=$('tab-'+to).getBoundingClientRect().top+(window.scrollY||0)-barH()-10; // 新标签页的开头（紧贴吸顶标签栏）
+    var target=(typeof TABSCROLL[to]==='number')?TABSCROLL[to]:(y>panelTop?panelTop:y);
+    window.scrollTo(0,Math.max(0,target)); scrollY0=window.scrollY||0; saveViewSoon(); }); });
+  document.addEventListener('click',function(e){
+    var g=e.target.closest && e.target.closest('[data-goto]'); if(g){ var q=g.getAttribute('data-goto').split(':'); gotoView(q[0],+q[1],+q[2]); return; }
+    var a=e.target.closest && e.target.closest('#g-toc a'); if(a){ e.preventDefault(); var el=document.getElementById(a.getAttribute('href').slice(1)); if(el) window.scrollTo({top:el.getBoundingClientRect().top+(window.scrollY||0)-barH()-8,behavior:'smooth'}); }
+  });
+  var bp=$('btn-print-guide'); if(bp) bp.addEventListener('click',function(){ prepPrint(); setTimeout(function(){ try{ window.print(); }finally{ setTimeout(endPrint,300); } },120); });
+  window.addEventListener('beforeprint',function(){ if(guideOn()) prepPrint(); });
+  window.addEventListener('afterprint',function(){ endPrint(); });
+  // controls
+  Array.prototype.forEach.call(document.querySelectorAll('[data-persp]'),function(b){ b.addEventListener('click',function(){ S.persp=b.getAttribute('data-persp'); S.hidden={}; if(S.persp==='2020'){ S.hidden['2024']=true; } press('[data-persp]','data-persp',S.persp); renderOverlay(false); renderTables(); }); });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-range]'),function(b){ b.addEventListener('click',function(){ var k=b.getAttribute('data-range'), live=M.cycles[M.cycles.length-1], n=M.lastIdx-live.hIdx;
+    if(k==='all') zoomOverlay(0,X_DAYS); if(k==='bottom') zoomOverlay(700,1100); if(k==='top') zoomOverlay(250,650); if(k==='now'){ var c=(S.persp===live.id)?n:900; zoomOverlay(c-120,c+120); } }); });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-ylog]'),function(b){ b.addEventListener('click',function(){ S.ylog=b.getAttribute('data-ylog')==='1'; press('[data-ylog]','data-ylog',S.ylog?'1':'0'); renderOverlay(true); }); });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-p2]'),function(b){ b.addEventListener('click',function(){ S.p2=b.getAttribute('data-p2'); press('[data-p2]','data-p2',S.p2); renderOverlay(true); }); });
+  $('ck-band').addEventListener('change',function(){ S.band=this.checked; renderOverlay(true); });
+  $('ck-win').addEventListener('change',function(){ S.win=this.checked; renderOverlay(true); });
+  $('ck-marks').addEventListener('change',function(){ S.marks=this.checked; renderOverlay(true); });
+  $('rg-thr').addEventListener('input',function(){ S.thr=(+this.value)/100; $('thr-val').textContent=this.value+'%'; renderOverlay(true); renderTables(); });
+  Array.prototype.forEach.call(document.querySelectorAll('[data-hrange]'),function(b){ b.addEventListener('click',function(){ var k=b.getAttribute('data-hrange'), end=M.startMs+(M.n+HIST_PAD)*DAY;
+    if(k==='all') zoomHistory(M.startMs,end); if(k==='2012') zoomHistory(parseD('2012-01-01'),end); if(k==='2020') zoomHistory(parseD('2020-01-01'),end); if(k==='2y') zoomHistory(M.startMs+(M.n-730)*DAY,end); }); });
+  $('btn-theme').addEventListener('click',function(){ S.theme=isDark()?'light':'dark'; pref.theme=S.theme; lsSet(LS_PREF,pref); applyTheme(); renderAll(true); });
+  $('btn-update').addEventListener('click',function(){ liveUpdate(false); });
+  $('btn-csv').addEventListener('click',exportCsv);
+  $('btn-export').addEventListener('click',exportHtml);
+  $('btn-clear').addEventListener('click',function(){ lsDel(LS_DELTA); EST=[]; M=buildModel(RAW,null); renderAll(true); setStatus('',describeData()+' · data added on this device cleared'); $('st-detail').textContent=''; });
+  $('ck-auto').addEventListener('change',function(){ S.auto=this.checked; pref.auto=S.auto; lsSet(LS_PREF,pref); });
+  var rz; window.addEventListener('resize',function(){ clearTimeout(rz); rz=setTimeout(function(){ if(chartO&&$('tab-overlay').classList.contains('on')){ chartO.resize(); renderOverlay(true); } if(chartH&&$('tab-history').classList.contains('on')){ chartH.resize(); renderHistory(); } if(guideOn()&&!printing) renderGuide(); },120); });
+  if(window.matchMedia) try{ matchMedia('(prefers-color-scheme: dark)').addEventListener('change',function(){ if(S.theme==='auto'){ applyTheme(); renderAll(true); } }); }catch(e){}
+  // 记住上次的样子
+  window.addEventListener('scroll',function(){ if(restoringScroll||printing) return; scrollY0=window.scrollY||0; saveViewSoon(); },{passive:true});
+  ['wheel','touchmove','keydown','mousedown'].forEach(function(ev){ window.addEventListener(ev,function(){ userScrolled=true; },{passive:true}); });
+  window.addEventListener('pagehide',saveView); window.addEventListener('beforeunload',saveView);
+  document.addEventListener('visibilitychange',function(){ if(document.visibilityState==='hidden') saveView(); });
+  ['btn-reset-view','btn-reset-view2'].forEach(function(id){ var b=$(id); if(b) b.addEventListener('click',function(){ resetView(); if(id==='btn-reset-view2') window.scrollTo(0,0); }); });
+  // 分享 / Murphy 原图样式
+  $('btn-share').addEventListener('click',openShare);
+  $('share-close').addEventListener('click',closeShare);
+  $('share-pop').addEventListener('click',function(e){ if(e.target===this) closeShare(); });
+  document.addEventListener('keydown',function(e){ if(e.key==='Escape' && !$('share-pop').hidden) closeShare(); });
+  $('share-copy').addEventListener('click',function(){ var u=$('share-url').value; copyText(u).then(function(ok){ if(ok){ closeShare(); toast('Link copied'); } else { $('share-url').select(); toast('Please select and copy the link above'); } }); });
+  $('share-native').addEventListener('click',function(){ var u=$('share-url').value; try{ navigator.share({title:document.title, url:u}).then(closeShare,function(){}); }catch(e){} });
+  $('btn-murphy').addEventListener('click',murphyPreset);
+  window.addEventListener('hashchange',function(){ // 页面已打开时再点到 #章节 或分享链接
+    var H=parseHashView(); if(!H) return;
+    if(!H.onlySec){ applySavedView(H); if(chartO){ chartO.dispose(); chartO=null; } }
+    selectTab(H.tab||'overlay'); renderTables();
+    setTimeout(function(){ if(H.sec) scrollToSection(H.sec); else window.scrollTo(0,0); },80);
+    try{ history.replaceState(null,'',location.href.split('#')[0]); }catch(e){}
+  });
+  addHeadingLinks($('tab-tables'),'tables');
+  var fab=$('fab-top'); fab.addEventListener('click',function(){ window.scrollTo({top:0,behavior:'smooth'}); });
+  window.addEventListener('scroll',function(){ fab.classList.toggle('on',(window.scrollY||0)>700); },{passive:true});
+  if(HV){ // 从分享链接打开：跳到对应章节，然后把网址里的 # 去掉（之后的改动照常自动记住）
+    restoringScroll=true; scrollY0=0;
+    requestAnimationFrame(function(){ if(HV.sec) scrollToSection(HV.sec); setTimeout(function(){ if(HV.sec && !userScrolled) scrollToSection(HV.sec); restoringScroll=false; scrollY0=window.scrollY||0; saveView(); },400); });
+    try{ history.replaceState(null,'',location.href.split('#')[0]); }catch(e){}
+  } else restoreScroll(V);
+  if(S.auto && !isSnapshot() && navigator.onLine!==false) liveUpdate(true);
+}
+window.__sx={ get model(){return M;}, get est(){return EST;}, state:S, bandsOf:function(p,thr){ return bandsOf(trioOf(p),thr); }, liveUpdate:liveUpdate, charts:function(){return {o:chartO,h:chartH,g:gCharts};},
+  backtestBands:backtestBands, analogRows:analogRows, analogSpan:analogSpan, murphyRows:murphyRows, rpReset:function(id){ return rpReset(M.cycles.filter(function(c){return c.id===id;})[0]); },
+  monthCount:function(id,m0,m1,lt){ var c=M.cycles.filter(function(x){return x.id===id;})[0]; return monthCount(c,m0,m1,lt?function(v){return v<1;}:function(v){return v>3;}); },
+  nextHalving:function(){ return fmtD(nextHalvingMs()); }, selectTab:selectTab, gotoView:gotoView, prepPrint:prepPrint, endPrint:endPrint,
+  todayAnalogs:todayAnalogs, swanRows:swanRows, triggerRows:triggerRows, triggerSpan:triggerSpan, recoverRows:recoverRows, scenRows:scenRows,
+  crashEpisodes:function(id,thr){ return crashEpisodes(cycById(id),thr); } };
+init();
+})();
+</script>
+</body>
+</html>
